@@ -18,9 +18,7 @@ export default {
   },
 
   render(h) {
-    const iconName = (this.$slots.default && this.$slots.default[0].text
-      ? this.$slots.default[0].text
-      : this.icon) || ''
+    const iconName = (this.$slots.default?.[0].text ?? this.icon)?.trim() || ''
 
     if (!iconName) return
 

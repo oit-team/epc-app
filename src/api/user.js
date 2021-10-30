@@ -9,3 +9,14 @@ import { post } from './index'
 export function loginAccount(params) {
   return post('/system/user/login', params)
 }
+
+/**
+ * 验证用户并获取数据
+ * @param {object} params
+ * @param {number} params.id 用户ID
+ * @param {number} params.orgId 机构ID
+ * @param {number} params.status
+ */
+export function selUserByID(params) {
+  return post('/system/user/selUserByID', params)
+}
