@@ -1,4 +1,6 @@
 import { NavBar } from 'vant'
+import { mergeContextData } from '../../utils/helper'
+import router from '@/router'
 
 export default {
   name: 'EHeader',
@@ -6,10 +8,6 @@ export default {
   functional: true,
 
   props: {
-    ...NavBar.props,
-    border: {
-      default: false,
-    },
     // 使用back参数来控制是否显示返回按钮
     back: {
       type: [Boolean],
@@ -18,13 +16,19 @@ export default {
   },
 
   render(h, ctx) {
-    return h(NavBar, {
-      ...ctx.data,
+    const data = mergeContextData(ctx, {
       class: 'e-header',
       props: {
-        ...ctx.props,
         leftArrow: ctx.props.back,
       },
+      on: {
+        'click-left': () => {
+          if (ctx.listeners.back) ctx.listeners.back()
+          else router.back()
+        },
+      },
     })
+
+    return h(NavBar, data)
   },
 }

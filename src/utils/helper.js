@@ -5,12 +5,21 @@
  * @returns {string|undefined}
  */
 export function convertToUnit(str, unit = 'px') {
+  let size
+
   if (str === null || str === undefined || str === '')
     return undefined
   else if (isNaN(+str))
-    return String(str)
+    size = String(str)
   else
-    return `${Number(str)}${unit}`
+    size = `${Number(str)}${unit}`
+
+  if (/([0-9]+(\.?[0-9]+)?)px$/.test(size)) {
+    const num = parseFloat(size)
+    return `${num / 375 * 100}vw`
+  } else {
+    return size
+  }
 }
 
 /**
@@ -69,3 +78,27 @@ const _toString = Object.prototype.toString
 export function getRawType(value) {
   return _toString.call(value).slice(8, -1)
 }
+
+/**
+ * 合并函数式组件上下文数据
+ * @param {object} context 上下文
+ * @param {object} data 需要合并的数据
+ * @returns {object} 合并结果
+ */
+export function mergeContextData(context, data) {
+  const assign = (obj1, obj2) => Object.assign({}, obj1, obj2)
+
+  return {
+    ...context.data,
+    ...data,
+    attrs: assign(context.data.attrs, data.attrs),
+    props: assign(context.props, data.props),
+    on: assign(context.listeners, data.on),
+    scopedSlots: assign(context.data.scopedSlots, data.scopedSlots),
+  }
+}
+
+// 验证是否是IOS系统
+export const isIos = /Mac OS/.test(window.navigator.userAgent)
+// 验证是否是安卓系统
+export const isAndroid = /Android/.test(window.navigator.userAgent)

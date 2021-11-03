@@ -1,26 +1,25 @@
 import Axios from 'axios'
-import storage from '@/utils/storage'
-import status from './status'
+import store from '@/store'
+import API_STATUS from '@/api/API_STATUS'
 
 // axios配置
 const axiosConfig = {
   // 请求超时时间
   timeout: 60000,
-  baseURL: '/api',
+  baseURL: '/',
 }
 
 // 创建axios实例
-export const axios = Axios.create(axiosConfig)
+const axios = Axios.create(axiosConfig)
 
 /**
  * 请求拦截器
  */
 axios.interceptors.request.use(config => {
-  const userData = storage.getItem('userData')
-  const accessToken = storage.getItem('accessToken')
+  const userData = store.getters.userData
 
   config.headers.userId ??= userData?.userId
-  config.headers.token ??= accessToken
+  config.headers.token ??= userData?.accessToken
 
   return config
 }, error => {
@@ -43,7 +42,7 @@ axios.interceptors.response.use(response => {
  * @param {object} config 配置
  */
 export function post(url, params = {}, config = {}) {
-  const userData = storage.getItem('userData')
+  const userData = store.getters.userData
 
   const formatedParams = {
     head: {
@@ -64,7 +63,7 @@ export function post(url, params = {}, config = {}) {
     method: 'post',
     data: formatedParams,
   }).then(res => {
-    if (res.data?.head.status === status.OK) {
+    if (res.data.head?.status === API_STATUS.OK) {
       return res.data
     } else {
       return Promise.reject(res.data)
@@ -73,3 +72,5 @@ export function post(url, params = {}, config = {}) {
     return Promise.reject(err)
   })
 }
+
+export default axios

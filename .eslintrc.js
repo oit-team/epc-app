@@ -38,6 +38,8 @@ module.exports = {
     curly: 'off',
     // 强制操作符使用一致的换行符风格
     'operator-linebreak': ['error', 'before'],
+    // 要求使用 let 或 const 而不是 var
+    'no-var': 'error',
     /* -------------以下为vue相关验证[https://eslint.vuejs.org/rules]------------- */
     // 缩进规则
     'vue/script-indent': ['error', 2, { baseIndent: 0, switchCase: 1 }],

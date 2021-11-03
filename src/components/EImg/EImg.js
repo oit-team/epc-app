@@ -1,5 +1,5 @@
 import { Image } from 'vant'
-import { convertToUnit } from '@/utils/helper'
+import { convertToUnit, mergeContextData } from '@/utils/helper'
 
 export default {
   name: 'EImg',
@@ -18,14 +18,14 @@ export default {
       src = 'https://picsum.photos/' + RegExp.$1
     }
 
-    return h(Image, {
-      ...ctx.data,
+    const data = mergeContextData(ctx, {
       props: {
-        ...ctx.props,
         src,
         height: ctx.props.height ?? convertToUnit(ctx.props.size),
         width: ctx.props.width ?? convertToUnit(ctx.props.size),
       },
     })
+
+    return h(Image, data)
   },
 }

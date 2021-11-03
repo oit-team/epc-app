@@ -1,4 +1,5 @@
 import { post } from './index'
+import API_SERVICE from './API_SERVICE'
 
 /**
  * 账号登录
@@ -7,7 +8,7 @@ import { post } from './index'
  * @param {string} params.passWord 经过AES加密后的密码
  */
 export function loginAccount(params) {
-  return post('/system/user/login', params)
+  return post(API_SERVICE.SYSTEM + '/user/login', params)
 }
 
 /**
@@ -18,5 +19,5 @@ export function loginAccount(params) {
  * @param {number} params.status
  */
 export function selUserByID(params) {
-  return post('/system/user/selUserByID', params)
+  return post(API_SERVICE.SYSTEM + '/user/selUserByID', params)
 }

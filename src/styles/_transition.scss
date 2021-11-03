@@ -1,0 +1,48 @@
+$route-transition: .3s;
+
+// 路由过渡
+.push-route {
+  &-enter-active, &-leave-active {
+    position: absolute;
+    will-change: transform;
+    transition: $route-transition;
+  }
+
+  &-enter {
+    transform: translate3d(100%, 0, 0);
+  }
+
+  &-enter-active {
+    z-index: 50;
+  }
+
+  &-leave-to {
+    transform: translate3d(-20%, 0, 0);
+  }
+
+  &-leave-active {
+    z-index: 0;
+  }
+}
+
+.pop-route {
+  &-enter-active, &-leave-active {
+    position: absolute;
+    will-change: transform;
+    transition: $route-transition;
+  }
+
+  &-leave-active, &-leave, &-leave-to {
+    transform: translate3d(100%, 0, 0);
+    z-index: 60 !important;
+  }
+
+  &-enter {
+    transform: translate3d(-20%, 0, 0);
+    z-index: -1 !important;
+  }
+
+  &-enter-to {
+    z-index: -1 !important;
+  }
+}

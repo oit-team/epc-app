@@ -1,4 +1,5 @@
 import { post } from './index'
+import API_SERVICE from './API_SERVICE'
 
 /**
  * 获取明星榜数据
@@ -7,7 +8,7 @@ import { post } from './index'
  * @param {number} params.dayNum 往前推移的时间，根据传入的flag不同，推移的时间单位也不同
  */
 export function getTopEmployeeByDate(params) {
-  return post('/reporting/starList/getTopEmployeeByDate', params)
+  return post(API_SERVICE.REPORTING + '/starList/getTopEmployeeByDate', params)
 }
 
 /**
@@ -18,7 +19,7 @@ export function getTopEmployeeByDate(params) {
  * @param {number} params.belong 时间筛选条件
  */
 export function getUserRanking(params) {
-  return post('/reporting/starList/getUserRanking', params)
+  return post(API_SERVICE.REPORTING + '/starList/getUserRanking', params)
 }
 
 /**
@@ -30,7 +31,7 @@ export function getUserRanking(params) {
  * @param {number} params.belong 时间筛选条件
  */
 export function getSotfUeingList(params) {
-  return post('/reporting/starList/getSotfUeingList', params)
+  return post(API_SERVICE.REPORTING + '/starList/getSotfUeingList', params)
 }
 
 /**
@@ -42,5 +43,5 @@ export function getSotfUeingList(params) {
  * @param {number} params.belong 时间筛选条件
  */
 export function getUserSotfRanking(params) {
-  return post('/reporting/starList/getUserSotfRanking', params)
+  return post(API_SERVICE.REPORTING + '/starList/getUserSotfRanking', params)
 }

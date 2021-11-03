@@ -11,6 +11,12 @@ import ELoading from './ELoading'
 import EPicker from './EPicker'
 import EPromise from './EPromise'
 import EEmpty from './EEmpty'
+import ETabbar from './ETabbar'
+import EDivider from './EDivider'
+import { EGrid, EGridItem } from './EGrid'
+import EPanel from './EPanel'
+import EBadge from './EBadge'
+import ECell from './ECell'
 
 // 需要全局注册的组件，使用频繁的组件可以放在这里
 const commonComponents = [
@@ -18,6 +24,7 @@ const commonComponents = [
   EBtn,
   EHeader,
   EIcon,
+  EDivider,
 ]
 
 // 全局注册组件
@@ -37,4 +44,11 @@ export {
   EPicker,
   EPromise,
   EEmpty,
+  ETabbar,
+  EDivider,
+  EGrid,
+  EGridItem,
+  EPanel,
+  EBadge,
+  ECell,
 }

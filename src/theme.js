@@ -1,11 +1,15 @@
 module.exports = {
   primary: '#67cf69',
+  secondary: '#999999',
+  success: '#00CC65',
+  error: '#E30101',
+  warn: '#FFA500',
+  link: '#1978FE',
   white: '#ffffff',
   black: '#000000',
   gray: '#f5f5f5',
   'gray-1': '#999999',
-  'gray-2': '#333333',
-  success: '#00CC65',
-  error: '#E30101',
+  'gray-2': '#666666',
+  'gray-3': '#333333',
   transparent: 'transparent',
 }

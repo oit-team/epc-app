@@ -10,7 +10,6 @@ const spacing = (() => {
 })()
 
 module.exports = {
-  // important: true,
   purge: [
     './src/**/*.vue',
   ],
@@ -66,7 +65,6 @@ module.exports = {
     backgroundClip: false,
     backgroundAttachment: false,
     textTransform: false,
-    textDecoration: false,
     listStylePosition: false,
     listStyleType: false,
     fontVariantNumeric: false,

@@ -1,51 +1,75 @@
-import './EIcon.scss'
-
+import { Icon } from 'vant'
 import { convertToUnit } from '@/utils/helper'
+import icons from '@/assets/icons'
+
+import './EIcon.scss'
 
 export default {
   name: 'EIcon',
 
   props: {
-    icon: String,
+    name: String,
     size: [String, Number],
     color: String,
   },
 
+  data: () => ({
+    iconName: '',
+    iconSize: '',
+  }),
+
   methods: {
-    getSize() {
-      return convertToUnit(this.size)
+    genSvgIcon() {
+      const h = this.$createElement
+
+      return h('span', {
+        class: 'e-icon',
+        style: {
+          height: this.iconSize,
+          width: this.iconSize,
+          fontSize: this.iconSize,
+          color: this.color,
+        },
+      }, [
+        h('svg', {
+          class: 'e-icon__svg',
+          attrs: {
+            'aria-hidden': true,
+          },
+          on: this.$listeners,
+        }, [
+          h('use', {
+            attrs: {
+              'xlink:href': `#icon-${this.iconName}`,
+            },
+          }),
+        ]),
+      ])
+    },
+    genVanIcon() {
+      const h = this.$createElement
+
+      return h(Icon, {
+        props: {
+          ...this.$attrs,
+          ...this.$props,
+          name: this.iconName,
+          size: this.iconSize,
+        },
+      })
     },
   },
 
   render(h) {
-    const iconName = (this.$slots.default?.[0].text ?? this.icon)?.trim() || ''
+    this.iconName = (this.$slots.default?.[0].text ?? this.name)?.trim() || ''
+    this.iconSize = convertToUnit(this.size)
 
-    if (!iconName) return
+    if (!this.iconName) return
 
-    const fontSize = this.getSize() || '16'
-
-    return h('span', {
-      class: 'e-icon',
-      style: {
-        height: fontSize,
-        width: fontSize,
-        fontSize: fontSize,
-        color: this.color,
-      },
-    }, [
-      h('svg', {
-        class: 'e-icon__svg',
-        attrs: {
-          'aria-hidden': true,
-        },
-        on: this.$listeners,
-      }, [
-        h('use', {
-          attrs: {
-            'xlink:href': `#icon-${iconName}`,
-          },
-        }),
-      ]),
-    ])
+    if (icons.includes(this.iconName)) {
+      return this.genSvgIcon()
+    } else {
+      return this.genVanIcon()
+    }
   },
 }

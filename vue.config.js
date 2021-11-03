@@ -13,9 +13,9 @@ function resolve(dir) {
 module.exports = {
   publicPath: './',
   devServer: {
-    port: 9000,
+    port: 8000,
     // 后端API地址
-    proxy: 'http://ox98jgp.nat.ipyingshe.com:42729/zxl/',
+    proxy: 'http://ox98jgp.nat.ipyingshe.com:42729/api/',
   },
   productionSourceMap: !production,
   css: {

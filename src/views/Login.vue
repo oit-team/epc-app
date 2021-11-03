@@ -1,11 +1,11 @@
 <template>
-  <div class="flex-center text-center px-10">
+  <div class="flex-center text-center px-10 bg-white">
     <div class="flex-1">
       <div class="mb-8">
         <e-img src="images/logo.png" size="90"></e-img>
-        <div class="text-xl font-bold text-gray-2">欢迎来到EPC</div>
+        <div class="text-xl font-bold text-gray-3">欢迎来到EPC</div>
       </div>
-      <form>
+      <form @submit.prevent>
         <div class="field">
           <e-icon class="text-gray-1" size="18">user</e-icon>
           <input v-model.trim="form.username" type="text" placeholder="账号">
@@ -35,18 +35,32 @@
         <e-btn class="mt-10" type="primary" block @click="login()">登录</e-btn>
       </form>
     </div>
+    <e-loading :show="showLoading">正在验证登录</e-loading>
   </div>
 </template>
 
 <script>
 import crypto from '@/utils/crypto'
 import * as api from '@/api/user'
-import storage from '@/utils/storage'
+import { ELoading } from '@/components'
+import iframe from '@/utils/iframe'
+
+const STATIC_TYPES = {
+  // 验证成功
+  SUCCESS: 0,
+  // 用户不存在
+  NOT_EXIST: 1,
+}
 
 export default {
   name: 'Login',
 
+  components: {
+    ELoading,
+  },
+
   data: () => ({
+    showLoading: false,
     form: {
       username: '',
       password: '',
@@ -70,24 +84,36 @@ export default {
         employeeId: this.form.username,
         passWord: encryptedPwd,
       }).then(res => {
-        storage.setItem('accessToken', res.body.accessToken)
-        storage.setItem('userData', res.body.result)
         this.$toast.success('登录成功')
+
+        this.$store.commit('SAVE_USER_DATA', {
+          ...res.body.result,
+          accessToken: res.body.accessToken,
+        })
+        iframe.loginSuccess()
+
+        this.$router.to('Home')
       }).catch(err => {
         this.$toast.fail(err.head.msg)
       })
     },
     checkLogin() {
-      const userData = storage.getItem('userData')
+      const userData = this.$store.getters.userData
 
-      if (!userData) return
-
+      this.showLoading = true
       api.selUserByID({
         id: userData.userId,
         orgId: userData.orgId,
         status: 0,
       }).then(res => {
-        console.log(res)
+        const userStatic = res.body.static
+        if (userStatic === STATIC_TYPES.SUCCESS) {
+          this.$router.replace({ name: 'Home' })
+        } else if (userStatic === STATIC_TYPES.NOT_EXIST) {
+          this.$toast.fail('用户不存在')
+        }
+      }).finally(() => {
+        this.showLoading = false
       })
     },
   },

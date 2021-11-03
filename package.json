@@ -20,6 +20,7 @@
     "vant": "^2.12.30",
     "vue": "^2.6.11",
     "vue-router": "^3.5.3",
+    "vue-slim-better-scroll": "^1.7.1",
     "vuex": "^3.4.0"
   },
   "devDependencies": {
@@ -36,6 +37,7 @@
     "@vue/eslint-config-standard": "^5.1.2",
     "babel-eslint": "^10.1.0",
     "babel-plugin-import": "^1.13.3",
+    "eruda": "^2.4.1",
     "eslint": "^7.32.0",
     "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-node": "^11.1.0",

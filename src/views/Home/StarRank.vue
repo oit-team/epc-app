@@ -1,8 +1,8 @@
 <template>
-  <div class="bg-gray flex flex-col">
+  <div class="bg-white flex flex-col">
     <e-header title="明星榜" border></e-header>
 
-    <div class="date-type flex bg-white z-50">
+    <div class="date-type flex z-50">
       <e-tabs v-model="dateType" class="flex-1">
         <e-tab title="日" name="1"></e-tab>
         <e-tab title="周" name="2"></e-tab>
@@ -66,14 +66,7 @@
 <script>
 import { ETabs, ETab, ECharts, ELoading, EPicker, EEmpty } from '@/components'
 import * as api from '@/api/star'
-import status from '@/api/status'
-
-// 格式化软件使用比提示
-const useRatioTips = {
-  tooltip: {
-    formatter: '{b}: {c}%',
-  },
-}
+import API_STATUS from '@/api/API_STATUS'
 
 // 使用比
 const USE_RATIO = 0
@@ -91,9 +84,9 @@ const DATE_TYPES = {
   SEASON: '4',
 }
 // 准入软件颜色
-const VALID_COLOR = '#43bae8'
+const VALID_COLOR = '#ff8c7c'
 // 非标软件颜色
-const INVALID_COLOR = '#ed5868'
+const INVALID_COLOR = '#909399'
 
 export default {
   name: 'StarRank',
@@ -146,7 +139,8 @@ export default {
         },
         tooltip: {
           trigger: 'item',
-          position: 'right',
+          confine: true,
+          formatter: '{b}: {c}%',
         },
         series: [
           {
@@ -157,13 +151,11 @@ export default {
                 value: Number(this.useRatio.valid),
                 name: '准入软件',
                 itemStyle: { color: VALID_COLOR },
-                ...useRatioTips,
               },
               {
                 value: Number(this.useRatio.invalid),
                 name: '非标软件',
                 itemStyle: { color: INVALID_COLOR },
-                ...useRatioTips,
               },
             ],
             emphasis: {
@@ -193,6 +185,7 @@ export default {
         },
         tooltip: {
           trigger: 'item',
+          confine: true,
         },
         xAxis: {
           max: 'dataMax',
@@ -340,7 +333,7 @@ export default {
         this.userRankList = res.body.resultList
         this.pageEmpty = false
       }).catch(err => {
-        if (err.head.status === status.FAILED && err.body === null) {
+        if (err.head.status === API_STATUS.FAILED && err.body === null) {
           this.userRankList = []
           this.pageEmpty = true
           this.loading = false
@@ -378,11 +371,8 @@ export default {
       this.selectedIndex = index
       this.loadData()
     },
-    changeChartType(e) {
-      // this.chartType = e
-    },
     /**
-     * @param {boolean} num 用于差异判断，查询季的排行榜数据需要传数字
+     * @param {boolean} num 用于差异判断，查询季的用户排行榜数据需要传数字
      */
     formatQuery(item, num) {
       if (this.dateType === DATE_TYPES.WEEK) {
