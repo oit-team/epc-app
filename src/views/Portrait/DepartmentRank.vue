@@ -3,7 +3,7 @@
     <e-panel>
       <rank-item index="1" :item="{}"></rank-item>
     </e-panel>
-    <e-panel class="flex-1 mt-2">
+    <e-panel class="flex-1 mt-2 overflow-hidden">
       <div class="divide-y divide-gray">
         <rank-item v-for="(item, index) of 20" :key="index" :index="index"></rank-item>
       </div>

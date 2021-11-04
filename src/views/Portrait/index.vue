@@ -19,6 +19,8 @@
 </template>
 
 <script>
+// TODO: 用颜色区分分数
+
 export default {
   name: 'Portrait',
 
@@ -35,7 +37,7 @@ export default {
         to: '/portrait/data',
       },
       {
-        title: '个人',
+        title: '同事',
         to: '/portrait/personal-rank',
       },
       {

@@ -28,9 +28,8 @@ export function convertToUnit(str, unit = 'px') {
  * @param format 格式
  * @returns {string} format 格式后的日期时间
  */
-export const formatDate = (date, format = 'yyyy-MM-dd') => {
-  if (!date) return ''
-  if (typeof date === 'number' && String(date).length <= 10) date = date * 1000
+export const formatDate = (date, format = 'yyyy/MM/dd') => {
+  if (date === undefined) return ''
   // 此处将横杠"-"替换成"/"是为了处理ios端兼容
   date = new Date(typeof date === 'string' ? date.replace(/-/g, '/') : date)
   if (date.toString() === 'Invalid Date') return ''
@@ -102,3 +101,14 @@ export function mergeContextData(context, data) {
 export const isIos = /Mac OS/.test(window.navigator.userAgent)
 // 验证是否是安卓系统
 export const isAndroid = /Android/.test(window.navigator.userAgent)
+
+/**
+ * 获取多少天以前的日期
+ * @param {object} day 要往前的天数
+ * @param {string} format 格式化
+ */
+export function getDaysAgo(day, format = 'yyyy/MM/dd') {
+  const total = 1000 * 60 * 60 * 24 * day
+
+  return formatDate(Date.now() - total, format)
+}

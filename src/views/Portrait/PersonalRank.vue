@@ -3,7 +3,7 @@
     <e-panel>
       <rank-item index="1" :item="{}"></rank-item>
     </e-panel>
-    <e-panel class="flex-1 mt-2">
+    <e-panel class="flex-1 mt-2 overflow-hidden">
       <div class="divide-y divide-gray">
         <rank-item v-for="(item, index) of 20" :key="index" :index="index"></rank-item>
       </div>
@@ -22,10 +22,10 @@ const RankItem = {
 
   render(h) {
     return (
-      <div class="flex items-center py-2 text-center" vOn:click={() => this.$router.to('./data/' + this.index)}>
+      <div class="flex items-center py-2 text-center" vOn:click={() => this.$router.to(/* './data/personal/' + this.index */ 'Portrait')}>
         <div class="text-primary w-1/6">{this.index}</div>
-        <e-img class="rounded-lg" src="lorem:50" size="50"></e-img>
-        <div class="flex-1 text-sm">
+        <e-img class="rounded-lg mr-2" src="lorem:50" size="50"></e-img>
+        <div class="flex-1 text-sm text-left">
           <div>陈小龙，软件部门</div>
           <div>JAVA开发工程师</div>
         </div>

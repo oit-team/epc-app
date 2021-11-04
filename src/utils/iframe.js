@@ -34,6 +34,16 @@ const iframe = {
       accessToken: userData.accessToken,
     })
   },
+  /**
+   * 原生页面传过来的msgId
+   * @param {string} msgId
+   */
+  getQueryDetail(msgId) {
+    iframe.postMessage({
+      methodName: 'getQueryDetail',
+      msgId,
+    })
+  },
 }
 
 export default iframe

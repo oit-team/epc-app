@@ -5,15 +5,15 @@
       <ul>
         <li @click="toSecret">
           <span class="item-tit">修改密码</span>
-          <span><img class="banImg" src="/static/imgs/go@2x.png"></span>
+          <e-icon name="arrow" />
         </li>
         <li @click="toAbout">
           <span class="item-tit">关于我们</span>
-          <span><img class="banImg" src="/static/imgs/go@2x.png"></span>
+          <e-icon name="arrow" />
         </li>
         <li @click="toFeedback">
           <span class="item-tit">意见反馈</span>
-          <span><img class="banImg" src="/static/imgs/go@2x.png"></span>
+          <e-icon name="arrow" />
         </li>
         <li>
           <span class="item-tit">版&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;本</span>

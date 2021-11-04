@@ -2,7 +2,7 @@
   <div class="bg-white flex flex-col">
     <e-header title="明星榜" border></e-header>
 
-    <div class="date-type flex z-50">
+    <div class="date-type flex bg-white z-50">
       <e-tabs v-model="dateType" class="flex-1">
         <e-tab title="日" name="1"></e-tab>
         <e-tab title="周" name="2"></e-tab>

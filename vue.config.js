@@ -15,7 +15,7 @@ module.exports = {
   devServer: {
     port: 8000,
     // 后端API地址
-    proxy: 'http://ox98jgp.nat.ipyingshe.com:42729/api/',
+    proxy: 'http://ox98jgp.nat.ipyingshe.com:80/api/',
   },
   productionSourceMap: !production,
   css: {
@@ -25,6 +25,7 @@ module.exports = {
           tailwindcss,
           pxtoviewport({
             viewportWidth: 375, // UI设计稿的宽度
+            unitPrecision: 6, // 保留精度
           }),
         ],
       },

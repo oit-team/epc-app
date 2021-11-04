@@ -43,6 +43,10 @@ export default {
     EBadge,
   },
 
+  data: () => ({
+    panelData: [],
+  }),
+
   created() {
     this.panelData = [
       {

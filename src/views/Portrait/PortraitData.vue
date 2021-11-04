@@ -1,13 +1,19 @@
 <template>
   <div class="flex-1 flex flex-col">
     <e-header v-if="$route.meta.page" title="参数"></e-header>
-    <e-tabs class="data-type">
-      <e-tab title="基础信息"></e-tab>
-      <e-tab title="风险管理"></e-tab>
-    </e-tabs>
+    <div class="flex bg-white items-center justify-between pl-2 pr-3">
+      <e-tabs class="data-type">
+        <e-tab title="基础信息"></e-tab>
+        <e-tab title="风险管理"></e-tab>
+      </e-tabs>
+      <e-icon>filter-list</e-icon>
+    </div>
 
     <div class="p-2 flex-1 flex flex-col">
       <e-panel class="mb-2">
+        <template #title>
+          <div class="text-center leading-none">2021/10/10 - 2021/10/30</div>
+        </template>
         <div class="flex">
           <div class="border-r border-gray w-2/5 text-center py-2 px-1">
             <div class="score text-primary">
@@ -42,6 +48,8 @@
 <script>
 import { ETabs, ETab, EPanel, ECharts } from '@/components'
 import theme from '@/theme'
+import * as api from '@/api/portrait'
+import { getDaysAgo, formatDate } from '@/utils/helper'
 
 export default {
   name: 'PortraitData',
@@ -100,12 +108,29 @@ export default {
       }
     },
   },
+
+  created() {
+    this.userId = this.$store.getters.userData.userId
+
+    this.getMyPortrait()
+  },
+
+  methods: {
+    getMyPortrait() {
+      api.getMyPortrait({
+        startTime: getDaysAgo(365),
+        endTime: formatDate(Date.now()),
+        userId: this.userId,
+      }).then(res => {
+
+      })
+    },
+  },
 }
 </script>
 
 <style lang='scss' scoped>
 .data-type::v-deep {
-  padding-left: 10px;
   background-color: white;
 
   .van-tab {

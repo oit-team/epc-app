@@ -6,14 +6,21 @@ Vue.use(VueRouter)
 
 const Login = () => import('@/views/Login')
 const Home = () => import('@/views/Home')
+const Warn = () => import('@/views/Home/Warn')
+const WarnUserList = () => import('@/views/Home/WarnUserList')
+const WarnListDetail = () => import('@/views/Home/WarnListDetail')
 const StarRank = () => import('@/views/Home/StarRank')
 
 const Account = () => import('@/views/Account')
 const Setup = () => import('@/views/Account/Setup')
 const UpdatePassword = () => import('@/views/Account/UpdatePassword')
 const About = () => import('@/views/Account/About')
+const PrivacyPolicy = () => import('@/views/Account/PrivacyPolicy')
+const ServiceAggrement = () => import('@/views/Account/ServiceAggrement')
 const Feedback = () => import('@/views/Account/Feedback')
 const UserInfo = () => import('@/views/Account/UserInfo')
+const UpdateUserInfo = () => import('@/views/Account/UpdateUserInfo')
+const SiriResult = () => import('@/views/Siri/SiriResult')
 
 const Portrait = () => import('@/views/Portrait')
 const PortraitData = () => import('@/views/Portrait/PortraitData')
@@ -33,6 +40,14 @@ const routes = [
   UpdatePassword,
   About,
   Feedback,
+  Warn,
+  WarnListDetail,
+  WarnUserList,
+  UserInfo,
+  UpdateUserInfo,
+  SiriResult,
+  PrivacyPolicy,
+  ServiceAggrement,
   {
     component: Portrait,
     children: [
@@ -42,14 +57,21 @@ const routes = [
       },
       {
         path: 'data',
-        name: 'PortraitData',
         component: PortraitData,
       },
       {
-        path: 'data/:id',
-        name: 'PortraitData',
+        path: 'data/personal/:id',
         component: PortraitData,
         meta: {
+          personal: true,
+          page: true,
+        },
+      },
+      {
+        path: 'data/dept/:id',
+        component: PortraitData,
+        meta: {
+          dept: true,
           page: true,
         },
       },
@@ -65,15 +87,15 @@ const routes = [
       },
     ],
   },
-  UserInfo,
 ]
 
 /**
  * 配置路由，每个组件必须提供name值，且不能重复
  * @param {Array} routes 路由数组
+ * @param {boolean} child 是否是子路由
  * @returns {Array} 路由表
  */
-const configureRoutes = (routes) => routes.map(item => {
+const configureRoutes = (routes, child = false) => routes.map(item => {
   if (typeof item === 'function') {
     return {
       path: '/' + kebabCase(item.name),
@@ -85,15 +107,26 @@ const configureRoutes = (routes) => routes.map(item => {
     }
   } else if (typeof item === 'object') {
     if (item.redirect) return item
+    const hasChild = item.children !== undefined
 
-    return {
+    const route = {
       ...item,
-      path: item.path ?? '/' + kebabCase(item.component.name),
-      name: item.name ?? item.component.name,
-      meta: Object.assign({
+      meta: {
         keepAlive: true,
-      }, item.meta),
+        ...item.meta,
+      },
     }
+
+    if (!child) {
+      route.path = item.path ?? '/' + kebabCase(item.component.name)
+      route.name = hasChild ? '' : item.name ?? item.component.name
+    }
+
+    if (hasChild) {
+      route.children = configureRoutes(route.children, true)
+    }
+
+    return route
   }
 })
 
