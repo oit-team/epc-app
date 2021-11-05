@@ -9,7 +9,7 @@
     </div>
     <!-- 预警记录列表 -->
     <Scroll
-      v-if="styleListFlag"
+      v-if="!styleListFlag"
       v-show="warnActive == 1"
       ref="warnLogScroll"
       class="warnLogScroll"
@@ -61,7 +61,7 @@
       </div>
     </Scroll>
     <!-- 工作信息列表-工作状态 -->
-    <div v-if="warnActive == 2 && warningList && warningList.length > 0 && styleListFlag" class="indexCon">
+    <div v-if="warnActive == 2 && warningList && warningList.length > 0 && !styleListFlag" class="indexCon">
       <div class="workList" @click="statusShow()">
         <div class="workUl">
           <span>工作状态</span>
@@ -73,17 +73,17 @@
         <div class="workLi">
           <div v-if="params.startTime == params.endTime " class="workStatistics">在这期间({{ params.startTime.slice(0,10) }})使用软件共<span class="softColor">{{ tableData.admittanceSize+tableData.notStandardSize }}</span>项;</div>
           <div v-else class="workStatistics">在这期间({{ params.startTime.slice(0,10) }} — {{ params.endTime.slice(0,10) }})使用软件共<span class="softColor">{{ tableData.admittanceSize+tableData.notStandardSize }}</span>项;</div>
-          <div class="workStatistics"><e-img class="banImg" src="/images/warn/ranking.png"></e-img>在【{{ tableData.deptName }}】排名第<span class="softColor">{{ tableData.ranking }}</span>名。</div>
+          <div class="workStatistics"><e-img class="banImg" src="assets/images/warn/ranking.png"></e-img>在【{{ tableData.deptName }}】排名第<span class="softColor">{{ tableData.ranking }}</span>名。</div>
         </div>
       </div>
     </div>
     <!-- 工作信息列表-工作日志 -->
-    <div v-if="warnActive == 2 && styleListFlag && warningList.length > 0" class="workUlTit">
+    <div v-if="warnActive == 2 && !styleListFlag && warningList.length > 0" class="workUlTit">
       <span>工作日志</span>
     </div>
-    <e-loading class="bg-gray" :show="!styleListFlag"></e-loading>
+    <e-loading class="bg-gray" :show="styleListFlag"></e-loading>
     <Scroll
-      v-if="styleListFlag"
+      v-if="!styleListFlag"
       v-show="warnActive == 2"
       ref="workLogScroll"
       :update-data="[warningList]"
@@ -109,7 +109,7 @@
       </div>
     </Scroll>
     <!-- 优化记录列表 -->
-    <div v-if="warnActive == 3 && styleListFlag" class="indexConOptimize">
+    <div v-if="warnActive == 3 && !styleListFlag" class="indexConOptimize">
       <div class="workRecord" :class="params.bhdTimeUnit=='日' && !data?'':'recordActive'">
         <div v-if="optimizationList && optimizationList.length > 0 " class="workListList">
           <div v-for="(item,index) in optimizationList" :key="index" class="workLi" @click="workDetailShow(item)">
@@ -123,7 +123,7 @@
         </div>
       </div>
       <div v-if="params.bhdTimeUnit=='日' && !data" class="workUl">
-        <e-icon class="fire-o" size="38" color="#fff" name="fire-o" @click="optimizeShow()"></e-icon>
+        <e-icon class="fire-o" size="38" color="#fff" name="fire-o" @click.native="optimizeShow()"></e-icon>
       </div>
     </div>
     <!-- 工作状态弹出层 -->
@@ -142,9 +142,9 @@
           <div class="popupContent">
             <div v-if="params.startTime == params.endTime">在这期间({{ params.startTime.slice(0,10) }})共使用软件<span class="softColor">{{ tableData.admittanceSize+tableData.notStandardSize }}</span>项;</div>
             <div v-else>在这期间({{ params.startTime.slice(0,10) }} — {{ params.endTime.slice(0,10) }})共使用软件<span class="softColor">{{ tableData.admittanceSize+tableData.notStandardSize }}</span>项;</div>
-            <div><e-img class="banImg" src="/images/warn/access.png"></e-img>准入软件<span class="softNum">{{ tableData.admittanceSize }}</span>项,总使用时长<span class="softNum">{{ tableData.admittanceSum }}</span>;</div>
-            <div><e-img class="banImg" src="/images/warn/noAccess.png"></e-img>非标软件<span class="softNumBan">{{ tableData.notStandardSize }}</span>项,总使用时长<span class="softNumBan">{{ tableData.notStandardSum }}</span>;</div>
-            <div><e-img class="banImg" src="/images/warn/ranking.png"></e-img>在【{{ tableData.deptName }}】排名第<span class="softColor">{{ tableData.ranking }}</span>名。</div>
+            <div><e-img class="banImg" src="assets/images/warn/access.png"></e-img>准入软件<span class="softNum">{{ tableData.admittanceSize }}</span>项,总使用时长<span class="softNum">{{ tableData.admittanceSum }}</span>;</div>
+            <div><e-img class="banImg" src="assets/images/warn/noAccess.png"></e-img>非标软件<span class="softNumBan">{{ tableData.notStandardSize }}</span>项,总使用时长<span class="softNumBan">{{ tableData.notStandardSum }}</span>;</div>
+            <div><e-img class="banImg" src="assets/images/warn/ranking.png"></e-img>在【{{ tableData.deptName }}】排名第<span class="softColor">{{ tableData.ranking }}</span>名。</div>
           </div>
         </Scroll>
       </div>
@@ -195,7 +195,7 @@
 
 <script>
 import { ELoading, EEmpty } from '@/components'
-import { Popup, Field } from 'vant'
+import { Popup, Field, CellGroup } from 'vant'
 import Scroll from 'vue-slim-better-scroll'
 export default {
   name: 'WarnListDetail',
@@ -205,6 +205,7 @@ export default {
     EEmpty,
     [Popup.name]: Popup,
     [Field.name]: Field,
+    [CellGroup.name]: CellGroup,
   },
   data: () => ({
     title: '日志信息',
@@ -213,7 +214,7 @@ export default {
       startTime: '',
       endTime: '',
     },
-    styleListFlag: false, // 加载lodding
+    styleListFlag: true, // 加载lodding
 
     tableData: {}, // 总数据集合
     bhdLog: [], // 预警记录
@@ -231,11 +232,10 @@ export default {
     workDetail: {},
   }),
   created() {
-    console.log('details created')
-    this.styleListFlag = false
-    // this.bhdLog = []
-    // this.warningList = []
-    // this.optimizationList = []
+    this.styleListFlag = true
+    this.bhdLog = []
+    this.warningList = []
+    this.optimizationList = []
     this.params = this.$route.params.list
     this.data = this.$route.params.data
     if (localStorage.isProcessed === 1 && !this.data) {
@@ -250,7 +250,15 @@ export default {
   },
   mounted() {},
   activated() {
-    console.log('details activated')
+    this.styleListFlag = true
+    this.bhdLog = []
+    this.warningList = []
+    this.optimizationList = []
+    if (this.$route.params.list) this.params = this.$route.params.list
+    if (this.$route.params.data) this.data = this.$route.params.data
+    setTimeout(() => {
+      this.searchInfo()
+    }, 500)
   },
   methods: {
     workDetailShow(item) {
@@ -261,7 +269,7 @@ export default {
     warnShow(val) {
       this.pageNum = 1
       this.warnActive = val
-      this.styleListFlag = false
+      this.styleListFlag = true
       this.searchInfo()
     },
     // 展开工作状态改变Boolean
@@ -331,7 +339,7 @@ export default {
       _this.$axios
         .post(this.GLOBAL.alarmServer + '/alarm/getWarningLog', jsonParam)
         .then(function(res) {
-          _this.styleListFlag = true
+          _this.styleListFlag = false
           if (res.data.head.status === 0) {
             if (_this.pageNum === 1) {
               _this.tableData = res.data.body

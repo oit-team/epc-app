@@ -9,6 +9,9 @@ export default {
   props: {
     ...Image.props,
     size: [String, Number],
+    fit: {
+      default: 'cover',
+    },
   },
 
   render(h, ctx) {

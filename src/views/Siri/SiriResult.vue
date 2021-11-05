@@ -7,7 +7,7 @@
     <e-loading :show="classLoading"></e-loading>
     <div v-if="!classLoading" class="page">
       <div class="li-title">
-        <img class="helpImg" src="/images/siri/help.png" />
+        <img class="helpImg" src="assets/images/siri/help.png" />
         <span>{{ sentence }}</span>
       </div>
       <div v-if="timeFrame.startTime && timeFrame.startTime == timeFrame.endTime" class="info">查询时间（{{ timeFrame.startTime }}）</div>

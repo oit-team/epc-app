@@ -236,8 +236,8 @@
           <div class="popupContent">
             <div v-if="params.startTime == params.endTime" class="odiv">{{ params.departName }}共<span class="softColor">{{ tableData.daptCount }}</span>人,在这期间({{ params.startTime.slice(0,10) }})使用软件共<span class="softColor">{{ tableData.admittanceSize+tableData.notStandardSize }}</span>项;</div>
             <div v-else class="odiv">{{ params.departName }}共<span class="softColor">{{ tableData.daptCount }}</span>人,在这期间({{ params.startTime.slice(0,10) }} — {{ params.endTime.slice(0,10) }})使用软件共<span class="softColor">{{ tableData.admittanceSize+tableData.notStandardSize }}</span>项;</div>
-            <div><e-img class="banImg" src="/images/warn/access.png"></e-img>准入软件<span class="softNum">{{ tableData.admittanceSize }}</span>项,总使用时长<span class="softNum">{{ tableData.admittanceSum }}</span>;</div>
-            <div><e-img class="banImg" src="/images/warn/noAccess.png"></e-img>非标软件<span class="softNumBan">{{ tableData.notStandardSize }}</span>项,总使用时长<span class="softNumBan">{{ tableData.notStandardSum }}</span> ;</div>
+            <div><e-img class="banImg" src="assets/images/warn/access.png"></e-img>准入软件<span class="softNum">{{ tableData.admittanceSize }}</span>项,总使用时长<span class="softNum">{{ tableData.admittanceSum }}</span>;</div>
+            <div><e-img class="banImg" src="assets/images/warn/noAccess.png"></e-img>非标软件<span class="softNumBan">{{ tableData.notStandardSize }}</span>项,总使用时长<span class="softNumBan">{{ tableData.notStandardSum }}</span> ;</div>
           </div>
         </Scroll>
       </div>
@@ -320,9 +320,8 @@ export default {
     }
   },
   created() {
-    console.debug('user created')
-    this.styleListFlag = true
     // this.bhdLog = []
+    this.styleListFlag = true
     if (this.$route.params.list) {
       this.params = this.$route.params.list
     }
@@ -336,7 +335,10 @@ export default {
   },
   mounted() {},
   activated() {
-    console.debug('user activated')
+    this.styleListFlag = true
+    setTimeout(() => {
+      this.searchInfoUser()
+    }, 500)
   },
   methods: {
     workDetailShow(item) {

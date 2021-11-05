@@ -140,12 +140,6 @@ export default {
 
     }
   },
-  created() {
-    console.debug('1')
-  },
-  methods: {
-
-  },
 }
 </script>
 <style lang="less" scoped>

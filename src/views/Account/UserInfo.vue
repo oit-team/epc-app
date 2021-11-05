@@ -4,7 +4,7 @@
     <van-cell-group>
       <van-cell class="py-2" title="头像" clickable>
         <input type="file" class="avatarFile" accept="image/*" name="image" @change="handleInputChange($event)">
-        <e-img class="rounded-lg float-right photo" :src="userData.headPortrait ? userData.headPortrait : '/images/userAvatar.png'" size="50" fit="cover"></e-img>
+        <e-img class="rounded-lg float-right photo" :src="userData.headPortrait ? userData.headPortrait : 'assets/images/userAvatar.png'" size="50" fit="cover"></e-img>
       </van-cell>
       <van-cell class="py-3" title="姓名" :value="userData.userName"></van-cell>
       <van-cell class="py-3" title="部门" :value="userData.deptName"></van-cell>
@@ -41,7 +41,6 @@ export default {
     },
     // 更新头像
     updateInfos() {
-      console.debug('修改头像和性别信息')
       const data = {
         headPortrait: this.imgStr,
         sex: this.$store.getters.userData.sex === '男' ? '0' : this.$store.getters.userData.sex === '女' ? '1' : '',

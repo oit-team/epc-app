@@ -13,6 +13,7 @@
 
 <script>
 import { EPanel } from '@/components'
+import * as api from '@/api/portrait'
 
 const RankItem = {
   props: {
@@ -38,6 +39,22 @@ export default {
   components: {
     EPanel,
     RankItem,
+  },
+
+  created() {
+    this.getDeptPortrait()
+  },
+
+  methods: {
+    getDeptPortrait() {
+      api.getDeptPortrait({
+        startTime: '',
+        endTime: '',
+        deptId: '',
+      }).then(res => {
+        console.log(res)
+      })
+    },
   },
 }
 </script>

@@ -87,12 +87,13 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
 .feedback{
+  margin-top:20px;
   background:#fff;
   color: #333333;
   font-family:PingFang-SC-Medium;
-  font-size: 0.25rem;
   align-items: center;
   width: 100%;
+  padding: 0 20px;
   display: flex;
   flex-direction: column;
   .feedback-content{
@@ -100,29 +101,15 @@ export default {
     flex-direction: column;
     box-sizing: border-box;
     width:100%;
-    padding: 0.4rem 0.4rem 0 0.4rem;
     .fieldText{
-      border:0.5px solid #e5e5e5;
-        font-size: 14px;
-        line-height: 20px;
-      /deep/ .van-field__control{
-        height:3rem !important;
-        font-size: 14px;
-        line-height: 20px;
-      }
-      /deep/ .van-field__word-limit{
-        font-size: 14px;
-        line-height: 20px;
-      }
+      border:1px solid #e5e5e5;
     }
     .feedButtom{
-      border:0.5px solid #e5e5e5;
+      border:1px solid #e5e5e5;
       margin-top:10px;
       color:#000;
-      padding: 0 0.2rem;
-      font-size: 0.32rem;
+      padding: 10px;
       .feedUl{
-        font-size: 0.37rem;
         display: flex;
         flex-direction: row;
         justify-content: space-between;
@@ -130,11 +117,11 @@ export default {
       }
     }
     .btn{
+      font-size: 16px;
       width:100%;
       color:#aaa !important;
       border-color:#ccc !important;
       background: #f5f5f5;
-      height:40px;
       margin:20px 0;
     }
   }

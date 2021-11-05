@@ -44,7 +44,7 @@ axios.interceptors.response.use(response => {
 export function post(url, params = {}, config = {}) {
   const userData = store.getters.userData
 
-  const formatedParams = {
+  const formattedParams = {
     head: {
       aid: userData?.userId,
       ver: '1.0',
@@ -61,7 +61,7 @@ export function post(url, params = {}, config = {}) {
   return axios({
     url,
     method: 'post',
-    data: formatedParams,
+    data: formattedParams,
   }).then(res => {
     if (res.data.head?.status === API_STATUS.OK) {
       return res.data

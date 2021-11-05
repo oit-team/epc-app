@@ -77,9 +77,6 @@ export default {
     font-size: 15px;
     background-color: var(--white);
 }
-/* .page{
-
-} */
 .page ul {
     background-color: #FFFFFF;
     display: flex;

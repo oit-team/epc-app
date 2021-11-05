@@ -3,7 +3,7 @@
     <e-header title="关于我们"></e-header>
 
     <div class="flex-1 overflow-hidden">
-      <e-img src="/images/about.png" size="100%" fit="contain"></e-img>
+      <e-img src="assets/images/about.png" size="100%" fit="contain"></e-img>
     </div>
 
     <footer class="text-center text-sm py-2">

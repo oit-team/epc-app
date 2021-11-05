@@ -23,21 +23,26 @@
             <div class="text-sm">资质分</div>
           </div>
           <div class="text-sm flex flex-col justify-between py-3 px-4">
-            <div>姓名：陈小龙</div>
-            <div>职位：WEB前端开发</div>
-            <div>部门：产品团队</div>
+            <div>姓名：{{ portraitData.userInfo.userName }}</div>
+            <div>职位：{{ portraitData.userInfo.position }}</div>
+            <div>部门：{{ portraitData.userInfo.deptName }}</div>
           </div>
         </div>
       </e-panel>
       <e-panel class="flex-1" title-class="flex justify-between">
         <template #title>
           <div>
-            <e-img class="align-middle mr-1" src="/images/portrait/c8021a9e914e4262eaee5071f9c3d3c5.png" size="16"></e-img>
+            <e-img
+              class="align-middle mr-1"
+              src="assets/images/portrait/c8021a9e914e4262eaee5071f9c3d3c5.png"
+              size="16"
+            ></e-img>
             <span>职位排名：第</span>
-            <span class="text-primary text-lg leading-none"> 1 </span>
+            <span class="text-primary text-lg leading-none"> {{ portraitData.userInfo.ranking }} </span>
             <span>名</span>
           </div>
-          <div>非常棒，请继续保持</div>
+          <!--TODO-->
+          <!--<div>非常棒，请继续保持</div>-->
         </template>
         <e-charts :option="chartOption"></e-charts>
       </e-panel>
@@ -63,23 +68,46 @@ export default {
 
   data: () => ({
     score: 58,
+    portraitData: {
+      userInfo: {},
+      portrait: {},
+    },
   }),
 
   computed: {
     scoreSplit() {
-      return String(this.score).split('.')
+      return String(this.portraitData.userInfo.qualificationNum)?.split('.')
     },
     chartOption() {
+      const {
+        workAttitude,
+        eawPercent,
+        forceExecutive,
+        validTimePercent,
+      } = this.portraitData.portrait
+
       return {
         grid: {
           width: 100,
         },
         radar: {
           indicator: [
-            { name: '工作态度', max: 100 },
-            { name: '工作效率', max: 100 },
-            { name: '执行力', max: 100 },
-            { name: '职位贡献', max: 100 },
+            {
+              name: '工作态度',
+              max: 100,
+            },
+            {
+              name: '工作效率',
+              max: 100,
+            },
+            {
+              name: '执行力',
+              max: 100,
+            },
+            {
+              name: '职位贡献',
+              max: 100,
+            },
           ],
           radius: [0, 100],
         },
@@ -100,7 +128,12 @@ export default {
             },
             data: [
               {
-                value: [80, 70, 90, 60],
+                value: [
+                  workAttitude,
+                  eawPercent,
+                  forceExecutive,
+                  validTimePercent,
+                ],
               },
             ],
           },
@@ -110,7 +143,7 @@ export default {
   },
 
   created() {
-    this.userId = this.$store.getters.userData.userId
+    this.userId = this.$route.params.id ?? this.$store.getters.userData.userId
 
     this.getMyPortrait()
   },
@@ -118,18 +151,18 @@ export default {
   methods: {
     getMyPortrait() {
       api.getMyPortrait({
-        startTime: getDaysAgo(365),
+        startTime: getDaysAgo(30),
         endTime: formatDate(Date.now()),
         userId: this.userId,
       }).then(res => {
-
+        this.portraitData = res.body.userRanking[0]
       })
     },
   },
 }
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .data-type::v-deep {
   background-color: white;
 

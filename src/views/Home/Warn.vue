@@ -108,7 +108,7 @@ export default {
     resuList: [],
   }),
   created() {
-    console.debug('warn created')
+    this.styleListFlag = true
     if (this.$route.query.bhdId) {
       this.bhdId = Number(this.$route.query.bhdId)
       // 预警团队用
@@ -132,7 +132,7 @@ export default {
     this.searchInfo()
   },
   activated() {
-    console.debug('warn activated')
+    this.styleListFlag = true
     if (this.$route.query.specialVal) {
       this.isActive = this.$route.query.specialVal
     } else {
@@ -213,7 +213,6 @@ export default {
           if (this.isActive === 1) {
             this.resultList = this.resuList
           }
-          // console.debug(this.$refs.workGroupScroll)
         } else {
           this.$this.$toast(res.data.head.msg)
         }

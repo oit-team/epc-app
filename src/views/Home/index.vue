@@ -55,14 +55,14 @@ export default {
           {
             bhdId: '1',
             text: '工作效率',
-            icon: '/images/home/6390dbec1d8114243b4d331903800434.png',
+            icon: 'assets/images/home/6390dbec1d8114243b4d331903800434.png',
             to: '/warn?bhdId=1',
             badge: 0,
           },
           {
             bhdId: '2',
             text: '考勤',
-            icon: '/images/home/c73426997a1143452ec229fd459ce115.png',
+            icon: 'assets/images/home/c73426997a1143452ec229fd459ce115.png',
             to: '/warn?bhdId=2',
             badge: 0,
           },
@@ -73,7 +73,7 @@ export default {
         items: [
           {
             text: '明星榜',
-            icon: '/images/home/04a2abf3cb5a443cf299ae007ff1babf.png',
+            icon: 'assets/images/home/04a2abf3cb5a443cf299ae007ff1babf.png',
             to: 'StarRank',
           },
         ],

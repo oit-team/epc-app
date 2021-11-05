@@ -16,7 +16,7 @@ const Setup = () => import('@/views/Account/Setup')
 const UpdatePassword = () => import('@/views/Account/UpdatePassword')
 const About = () => import('@/views/Account/About')
 const PrivacyPolicy = () => import('@/views/Account/PrivacyPolicy')
-const ServiceAggrement = () => import('@/views/Account/ServiceAggrement')
+const ServiceAgreement = () => import('@/views/Account/ServiceAgreement')
 const Feedback = () => import('@/views/Account/Feedback')
 const UserInfo = () => import('@/views/Account/UserInfo')
 const UpdateUserInfo = () => import('@/views/Account/UpdateUserInfo')
@@ -32,23 +32,72 @@ const routes = [
     path: '/',
     redirect: '/home',
   },
-  Home,
-  Login,
-  Account,
-  Setup,
-  StarRank,
-  UpdatePassword,
-  About,
-  Feedback,
-  Warn,
-  WarnListDetail,
-  WarnUserList,
-  UserInfo,
-  UpdateUserInfo,
-  SiriResult,
-  PrivacyPolicy,
-  ServiceAggrement,
   {
+    name: 'Home',
+    component: Home,
+  },
+  {
+    name: 'Login',
+    component: Login,
+  },
+  {
+    name: 'Account',
+    component: Account,
+  },
+  {
+    name: 'Setup',
+    component: Setup,
+  },
+  {
+    name: 'StarRank',
+    component: StarRank,
+  },
+  {
+    name: 'UpdatePassword',
+    component: UpdatePassword,
+  },
+  {
+    name: 'About',
+    component: About,
+  },
+  {
+    name: 'Feedback',
+    component: Feedback,
+  },
+  {
+    name: 'Warn',
+    component: Warn,
+  },
+  {
+    name: 'WarnListDetail',
+    component: WarnListDetail,
+  },
+  {
+    name: 'WarnUserList',
+    component: WarnUserList,
+  },
+  {
+    name: 'UserInfo',
+    component: UserInfo,
+  },
+  {
+    name: 'UpdateUserInfo',
+    component: UpdateUserInfo,
+  },
+  {
+    name: 'SiriResult',
+    component: SiriResult,
+  },
+  {
+    name: 'PrivacyPolicy',
+    component: PrivacyPolicy,
+  },
+  {
+    name: 'ServiceAgreement',
+    component: ServiceAgreement,
+  },
+  {
+    path: '/portrait',
     component: Portrait,
     children: [
       {
@@ -65,6 +114,7 @@ const routes = [
         meta: {
           personal: true,
           page: true,
+          auth: true,
         },
       },
       {
@@ -118,8 +168,8 @@ const configureRoutes = (routes, child = false) => routes.map(item => {
     }
 
     if (!child) {
-      route.path = item.path ?? '/' + kebabCase(item.component.name)
       route.name = hasChild ? '' : item.name ?? item.component.name
+      route.path = item.path ?? '/' + kebabCase(route.name)
     }
 
     if (hasChild) {
@@ -155,5 +205,13 @@ VueRouter.prototype.to = function(target, params = {}, query = false) {
 const router = new VueRouter({
   routes: configureRoutes(routes),
 })
+
+router.beforeEach(async(to, from, next) => {
+  next()
+
+  console.debug(`[路由] 跳转到【${to.path}】成功\n`, 'query:', to.query, 'params:', to.params)
+})
+
+console.debug(configureRoutes(routes))
 
 export default router

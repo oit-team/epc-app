@@ -13,20 +13,21 @@ export function getMyPortrait(params) {
 }
 
 /**
- * 查询个人画像
- * @param {object} params
- * @param {number} params.startTime 开始时间
- * @param {number} params.endTime 结束时间
+ * 查询同事画像排名
+ * @param {{startTime: string, endTime: string, userName: string}} params
+ * @param {string} params.startTime 开始时间
+ * @param {string} params.endTime 结束时间
+ * @param {number} params.userName 用户
  */
 export function getUserPortrait(params) {
-  return post(API_SERVICE.REPORTING + '/portrait/getUserPortrait', params)
+  return post(API_SERVICE.REPORTING + '/portrait/getUserRankingList', params)
 }
 
 /**
  * 查询部门画像
  * @param {object} params
- * @param {number} params.startTime 开始时间
- * @param {number} params.endTime 结束时间
+ * @param {string} params.startTime 开始时间
+ * @param {string} params.endTime 结束时间
  * @param {number} params.deptId 部门ID
  */
 export function getDeptPortrait(params) {

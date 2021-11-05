@@ -15,7 +15,8 @@ module.exports = {
   devServer: {
     port: 8000,
     // 后端API地址
-    proxy: 'http://192.168.9.71:7071/',
+    proxy: 'http://192.168.9.71:7071',
+    // proxy: 'https://app.eepcp.com:9444/epc',
   },
   productionSourceMap: !production,
   css: {

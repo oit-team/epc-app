@@ -1,12 +1,16 @@
 <template>
   <div id="app">
-    <keep-alive>
-      <router-view v-if="alwaysAlive" :key="$route.fullPath" class="router-view" />
-    </keep-alive>
-    <!-- <router-view v-if="!$route.meta.keepAlive" :key="$route.fullPath" class="router-view"></router-view> -->
-    <keep-alive max="10">
-      <router-view v-if="!alwaysAlive" :key="$route.fullPath" class="router-view"></router-view>
-    </keep-alive>
+    <template v-if="$route.meta.keepAlive">
+      <!--永久缓存的页面-->
+      <keep-alive>
+        <router-view v-if="alwaysAlive" :key="$route.fullPath" class="router-view always" />
+      </keep-alive>
+      <!--缓存页面-->
+      <keep-alive :max="10">
+        <router-view v-if="!alwaysAlive" :key="$route.fullPath" class="router-view"></router-view>
+      </keep-alive>
+    </template>
+    <router-view v-else class="router-view"></router-view>
 
     <e-tabbar ref="tabbar"></e-tabbar>
   </div>
@@ -49,6 +53,7 @@ export default {
     -moz-osx-font-smoothing: grayscale;
     color: rgba(0, 0, 0, .87);
     overflow: hidden;
+    -webkit-user-select: none;
     user-select: none;
   }
 

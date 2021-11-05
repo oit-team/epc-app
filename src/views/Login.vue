@@ -2,7 +2,7 @@
   <div class="flex-center text-center px-10 bg-white">
     <div class="flex-1">
       <div class="mb-8">
-        <e-img src="images/logo.png" size="90"></e-img>
+        <e-img src="assets/images/logo.png" size="90"></e-img>
         <div class="text-xl font-bold text-gray-3">欢迎来到EPC</div>
       </div>
       <form @submit.prevent>
