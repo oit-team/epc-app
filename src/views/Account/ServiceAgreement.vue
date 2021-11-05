@@ -1,5 +1,5 @@
 <template>
-  <div id="serviceAggrement">
+  <div id="serviceAgreement">
     <e-header title="EPC用户协议" border></e-header>
     <div class="service-body">
       <p>版本生效日期：2021年 8月 1日</p>
@@ -59,19 +59,16 @@
 </template>
 <script>
 export default {
-  name: 'ServiceAggrement',
+  name: 'ServiceAgreement',
   data() {
     return {
 
     }
   },
-  created() {
-    console.debug('1')
-  },
 }
 </script>
 <style lang="less" scoped>
-  #serviceAggrement{
+  #serviceAgreement{
     width:100%;
     height:100vh;
     display: flex;
