@@ -20,7 +20,6 @@
     "tailwindcss": "npm:@tailwindcss/postcss7-compat",
     "vant": "^2.12.30",
     "vue": "^2.6.11",
-    "vue-promised": "^2.2.0",
     "vue-router": "^3.5.3",
     "vue-slim-better-scroll": "^1.7.1",
     "vuex": "^3.4.0"
