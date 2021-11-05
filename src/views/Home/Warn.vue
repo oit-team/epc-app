@@ -26,7 +26,7 @@
       <div v-if="resultList && resultList.length > 0">
         <div v-for="(list,index) in resultList" :key="index" class="mineTopBox" @click="detailShow(list)">
           <div class="title">
-            <e-icon class="title-img" :name="list.userName?'manager-o':'cluster-o'" />
+            <e-icon class="title-img" :name="list.userName?'manager-o':'cluster-o'"></e-icon>
             <div class="title-li">
               <span class="title-span">{{ list.departName?list.departName:list.userName }}</span>
               <span v-if="list.startTime == list.endTime" class="title-date">{{ list.startTime.slice(0,10) }}</span>
@@ -77,7 +77,6 @@
 <script>
 import { ELoading, EEmpty } from '@/components'
 import Scroll from 'vue-slim-better-scroll'
-
 export default {
   name: 'Warn',
   components: {
@@ -87,33 +86,34 @@ export default {
   },
 
   data: () => ({
-    styleListFlag: true, // 加载lodding
-    // title:'预警',
-    title: '工作效率',
-    isActive: 1, // 判断是 未处理 1 还是 已处理 2
-    contentArr: [
-      // 显示未处理  已处理
-      { dicttimeDisplayName: '未处理' },
-      { dicttimeDisplayName: '已处理' },
-    ],
-    isLoading: false, // lodding
-    pageSize: 10,
-    pageNum: 1,
-    totalCount: 0, // 未读
-    total: 0, // 已读
+    // 标题
+    title: '',
+    // lodding
+    styleListFlag: true,
+    // 判断是 未处理 1 还是 已处理 2
+    isActive: 1,
 
-    query: {}, // 接受跳转传参
-    resultList: [], // 切换（已读/未读）列表数据
-    ruleList: [], // 已读列表数据
-    resuList: [], // 未读列表数据
+    pageNum: 1,
+    pageSize: 10,
+    total: 0, // 已读
+    totalCount: 0, // 未读
+
+    // 接受跳转传参
+    query: {},
+    // 切换（已读/未读）列表数据
+    resultList: [],
+    // 已读列表数据
+    ruleList: [],
+    // 未读列表数据
+    resuList: [],
   }),
   created() {
-    this.bhdId = Number(this.$route.query.bhdId)
-  },
-  mounted() {},
-  activated() {
-    // this.bhdId = 1//后面-》删除
-    console.debug('admin')
+    console.debug('warn created')
+    if (this.$route.query.bhdId) {
+      this.bhdId = Number(this.$route.query.bhdId)
+      // 预警团队用
+      localStorage.bhdId = this.$route.query.bhdId
+    }
     if (this.bhdId === 1) {
       this.title = '工作效率'
     } else if (this.bhdId === 2) {
@@ -123,35 +123,44 @@ export default {
       this.isActive = this.$route.query.specialVal
     } else {
       if (Number(localStorage.isProcessed)) {
-        this.isActive = localStorage.isProcessed
+        this.isActive = Number(localStorage.isProcessed)
       } else {
         this.isActive = 1
       }
     }
     this.resultList = []
-    // this.styleListFlag = false
     this.searchInfo()
   },
+  activated() {
+    console.debug('warn activated')
+    if (this.$route.query.specialVal) {
+      this.isActive = this.$route.query.specialVal
+    } else {
+      if (Number(localStorage.isProcessed)) {
+        this.isActive = Number(localStorage.isProcessed)
+      } else {
+        this.isActive = 1
+      }
+    }
+    this.resultList = []
+    this.searchInfo()
+  },
+  mounted() {},
   methods: {
     // 返回
     back() {
-      localStorage.isProcessed = ''
-      // this.$router.go(-1);
-      this.$router.push(
-        {
-          path: '/',
-        },
-      )
+      localStorage.removeItem('bhdId')
+      localStorage.removeItem('isProcessed')
+      this.$router.to('Home')
     },
     //  跳转至工作日志
     detailShow(list) {
       localStorage.isProcessed = this.isActive
-      // localStorage.isProcessed = 2
       if (list.userName) {
         this.$router.push(
           {
             name: 'WarnListDetail',
-            query: {
+            params: {
               list: list,
             },
           },
@@ -160,7 +169,7 @@ export default {
         this.$router.push(
           {
             name: 'WarnUserList',
-            query: {
+            params: {
               list: list,
             },
           },
@@ -182,40 +191,32 @@ export default {
     // 查询
     searchInfo() {
       // 未读信息
-      const _this = this
       const params = {
         bhdId: String(this.bhdId),
         pageNum: this.pageNum,
         pageSize: this.pageSize,
       }
       const jsonParam = this.GLOBAL.g_paramJson(params)
-      _this.$axios.post(this.GLOBAL.alarmServer + '/alarm/getNotBhdList', jsonParam).then(function(res) {
-        _this.styleListFlag = false
+      this.$axios.post(this.GLOBAL.alarmServer + '/alarm/getNotBhdList', jsonParam).then((res) => {
+        this.styleListFlag = false
         if (res.data.head.status === 0) {
-          if (_this.pageNum === 1) {
-            _this.totalCount = res.data.body.totalCount
-            _this.resuList = res.data.body.resultList
+          if (this.pageNum === 1) {
+            this.totalCount = res.data.body.totalCount
+            this.resuList = res.data.body.resultList
           } else {
-            _this.totalCount = res.data.body.totalCount
-            _this.resuList = _this.resuList.concat(res.data.body.resultList)
+            this.totalCount = res.data.body.totalCount
+            this.resuList = this.resuList.concat(res.data.body.resultList)
+            if (this.totalCount === this.resultList.length) {
+              this.$refs.workGroupScroll.update(true)
+            }
           }
-          // console.log(_this.isActive)
-          if (_this.isActive === 1) {
-            _this.resultList = _this.resuList
+          if (this.isActive === 1) {
+            this.resultList = this.resuList
           }
-          if (_this.totalCount === _this.resultList.length) {
-            this.$refs.workGroupScroll.update(true)
-          }
-          // 截取
-          // console.log(_this.resuList[0].ewContent)
-          // console.log(typeof _this.resuList[0].ewContent)
-          // console.log('_this.resuList.ewContent0='+_this.resuList[0].ewContent.replace(//g,''));//替换''为''
-          // console.log(typeof _this.resuList[0].ewContent.replace(//g,''))
+          // console.debug(this.$refs.workGroupScroll)
         } else {
-          _this.$this.$toast(res.data.head.msg)
+          this.$this.$toast(res.data.head.msg)
         }
-      }).catch(function() {
-        // _this.$this.$toast("接口调用失败");
       })
       // 已读信息
       const par = {
@@ -224,39 +225,32 @@ export default {
         pageSize: this.pageSize,
       }
       const jsonPar = this.GLOBAL.g_paramJson(par)
-      _this.$axios
+      this.$axios
         .post(this.GLOBAL.alarmServer + '/alarm/getBhdList', jsonPar)
-        .then(function(res) {
+        .then((res) => {
           if (res.data.head.status === 0) {
-            _this.total = res.data.body.totalCount
-            _this.ruleList = res.data.body.resultList
+            this.total = res.data.body.totalCount
+            this.ruleList = res.data.body.resultList
 
-            if (_this.pageNum === 1) {
-              _this.total = res.data.body.totalCount
-              _this.ruleList = res.data.body.resultList
+            if (this.pageNum === 1) {
+              this.total = res.data.body.totalCount
+              this.ruleList = res.data.body.resultList
             } else {
-              _this.total = res.data.body.totalCount
-              _this.ruleList = _this.ruleList.concat(res.data.body.resultList)
+              this.total = res.data.body.totalCount
+              this.ruleList = this.ruleList.concat(res.data.body.resultList)
+              if (this.total === this.resultList.length) {
+                this.$refs.workGroupScroll.update(true)
+              }
             }
-
-            // console.log(_this.isActive)
-            if (_this.isActive === 2) {
-              _this.resultList = _this.ruleList
-            }
-
-            if (_this.total === _this.resultList.length) {
-              this.$refs.workGroupScroll.update(true)
+            if (this.isActive === 2) {
+              this.resultList = this.ruleList
             }
           } else {
-            _this.$this.$toast(res.data.head.msg)
+            this.$toast(res.data.head.msg)
           }
-        })
-        .catch(function() {
-          // _this.$this.$toast("接口调用失败");
         })
     },
     changeAdd(index) {
-      this.styleListFlag = false
       this.isActive = index
       localStorage.isProcessed = index
       this.pageNum = 1
@@ -266,16 +260,9 @@ export default {
         this.searchInfo()
       }
     },
-    // onRefresh() {
-    //   setTimeout(() => {
-    //     this.isLoading = false;
-    //   }, 1000);
-    // }
   },
 }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 
 <style lang="less" scoped>
 #index {
@@ -285,11 +272,6 @@ export default {
   flex-direction: column;
   box-sizing: border-box;
   background-color: #f5f5f5;
-  //padding: 10px 12px;
-
-  // .header {
-  //   background-color: #f5f5f5;
-  // }
   .header {
     width: 100%;
     height: 1.2rem;
@@ -300,78 +282,30 @@ export default {
     font-size: 16px;
     color: #333;
     box-sizing: border-box;
-    // background-color: #ffffff;
     user-select: none;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
-    // padding: 0px 8px;
     padding:0 3%;
 
-  }
-  .header .img{
-    height:1.2rem;
-    display: flex;
-    align-items: center;
-  }
-  .header .img img {
-    width: 18px;
-    height: 18px;
-    padding-right:15px;
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-  }
-  .header .img .banImg {
-    width: 18px;
-    height: 18px;
-    padding-right:15px;
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-  }
-  .header .tit {
-    height: 1.2rem;
-    line-height:1.2rem;
-    font-size: 18px;
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-  }
-  .header .placeLabel {
-    height: 1.2rem;
-    line-height:1.2rem;
-    width: 33px;
   }
   .box {
     width: 100%;
     height: 40px;
-    // line-height: 1.2rem;
     display: flex;
     background-color: #ffffff;
-    // border-bottom: 1px solid #f5f5f5;
     justify-content: center;
-
     .box-list {
-      //width: 100%;
       width: 250px;
       -webkit-box-flex: 1;
-      // flex: 1;
-      // overflow: hidden;
       display: flex;
       flex-direction: row;
-      // align-items: center;
       justify-content: space-between;
       height: 40px;
-      // box-sizing: border-box;
       li {
         font-size: 15px;
         color: #333;
         white-space: nowrap;
-        // box-sizing: border-box;
         margin: 0 15px;
         height: 30px;
         line-height: 30px;
@@ -390,10 +324,6 @@ export default {
     overflow: hidden;
     width:94%;
     margin: 10px 3% 10px 3%;
-    // /deep/ .van-empty__description{
-    //   font-size:14px;
-    // }
-
     .mineTopBox {
       display: flex;
       flex-direction: column;
@@ -404,8 +334,7 @@ export default {
       border-radius: 8px;
       color: #333;
       margin-bottom: 10px;
-      position: relative;// 为子元素定位
-
+      position: relative;
       .title {
         width: 100%;
         border-bottom: 2px solid #f5f5f5;
@@ -433,10 +362,7 @@ export default {
           }
           .title-date{
             font-size: 12px;
-            // color:#a0a0a0;
-            // font-weight: bolder;
             flex:1;
-            // padding-left:30px;
             text-align:left;
           }
         }
@@ -469,13 +395,8 @@ export default {
         flex-direction: row;
         align-items: center;
         /deep/ .vue-slim-better-scroll__wrapper{
-          // height:100%!important;
-          // background-color: pink;
           display: flex;
           flex-direction: row;
-          // >div{
-          //   width: 100% !important;
-          // }
         }
         .content-box-li {
           flex: 1;

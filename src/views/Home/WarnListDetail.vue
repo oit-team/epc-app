@@ -1,67 +1,13 @@
 <template>
   <div id="index" @touchmove.prevent>
-    <!-- <Header title="日志信息"></Header> -->
-    <!-- <div class='header'>
-      <div class="img" @click="back">
-        <img class="banImg" src="/static/imgs/back.png" >
-      </div>
-      <span class="tit">{{query.userName}}</span>
-      <span class="placeLabel" ></span>
-    </div> -->
-    <e-header :title="query.userName" border @back="back"></e-header>
+    <e-header :title="params.userName" border></e-header>
+    <!-- tabs -->
     <div class="logTabs">
       <span :class="warnActive==1?'active':''" @click="warnShow(1)">预警记录</span>
       <span :class="warnActive==2?'active':''" @click="warnShow(2)">工作信息</span>
-      <span :class="warnActive==3?'active':''" @click="warnShow(3)">{{ query.bhdTimeUnit=='日'?'自我优化':'优化记录' }}</span>
+      <span :class="warnActive==3?'active':''" @click="warnShow(3)">{{ params.bhdTimeUnit=='日'?'自我优化':'优化记录' }}</span>
     </div>
-
-    <div v-if="warnActive == 2 && warningList && warningList.length > 0 && styleListFlag" class="indexCon">
-      <div class="workList" @click="statusShow()">
-        <div class="workUl">
-          <span>工作状态</span>
-          <!-- <img src="/static/imgs/rightArrowGrey.png" > -->
-          <div>
-            <span class="more">更多</span>
-            <van-icon name="arrow" color="#999" />
-          </div>
-        </div>
-        <div class="workLi">
-          <div v-if="query.startTime == query.endTime " class="workStatistics">在这期间({{ query.startTime.slice(0,10) }})使用软件共<span class="softColor">{{ tableData.admittanceSize+tableData.notStandardSize }}</span>项;</div>
-          <div v-else class="workStatistics">在这期间({{ query.startTime.slice(0,10) }} — {{ query.endTime.slice(0,10) }})使用软件共<span class="softColor">{{ tableData.admittanceSize+tableData.notStandardSize }}</span>项;</div>
-          <div class="workStatistics"><img class="banImg" src="/static/imgs/ranking.png" />在【{{ tableData.deptName }}】排名第<span class="softColor">{{ tableData.ranking }}</span>名。</div>
-        </div>
-      </div>
-    </div>
-    <div v-if="warnActive == 2 && styleListFlag" class="workUlTit">
-      <span>工作日志</span>
-    </div>
-    <div v-if="!styleListFlag"><van-loading color="#00a2ea" /></div>
-    <Scroll
-      v-if="styleListFlag"
-      v-show="warnActive == 2"
-      ref="workLogScroll"
-      :update-data="[warningList]"
-      :refresh-data="[]"
-      class="workLogScroll"
-      :probe-type="3"
-      :listen-scroll="true"
-      :scroll-x="false"
-      :scroll-y="true"
-      :auto-update="false"
-      @pullingDown="styleRefresh"
-      @pullingUp="styleLoadMore"
-    >
-      <div v-if="warningList && warningList.length > 0" class="workLog">
-        <div v-for="(item,index) in warningList" :key="index" class="workLi">
-          <span>{{ item.sotExeName }}</span>
-          <span :class="item.validType=='准入软件'?'adoptType':item.validType=='非标软件'?'banType':''">{{ item.validType }}</span>
-          <span>{{ item.validTime }}</span>
-        </div>
-      </div>
-      <div v-else style="text-align:center;padding-top:1px;">
-        <van-empty description="暂无数据" />
-      </div>
-    </Scroll>
+    <!-- 预警记录列表 -->
     <Scroll
       v-if="styleListFlag"
       v-show="warnActive == 1"
@@ -76,9 +22,9 @@
       <div v-if="bhdLog && bhdLog.length > 0" class="warnLog">
         <div v-for="(list,index) in bhdLog" :key="index" class="mineTopBox">
           <div class="title">
-            <van-icon class="title-img" :name="query.userName?'manager-o':'cluster-o'" />
+            <e-icon class="title-img" :name="params.userName?'manager-o':'cluster-o'"></e-icon>
             <div class="title-li">
-              <span class="title-span">{{ query.departName?query.departName:query.userName }}</span>
+              <span class="title-span">{{ params.departName?params.departName:params.userName }}</span>
               <span class="title-date">{{ list.createTime }}</span>
             </div>
           </div>
@@ -111,11 +57,60 @@
         </div>
       </div>
       <div v-else style="text-align:center;">
-        <van-empty description="暂无数据" />
+        <e-empty></e-empty>
       </div>
     </Scroll>
+    <!-- 工作信息列表-工作状态 -->
+    <div v-if="warnActive == 2 && warningList && warningList.length > 0 && styleListFlag" class="indexCon">
+      <div class="workList" @click="statusShow()">
+        <div class="workUl">
+          <span>工作状态</span>
+          <div>
+            <span class="more">更多</span>
+            <e-icon name="arrow" color="#999"></e-icon>
+          </div>
+        </div>
+        <div class="workLi">
+          <div v-if="params.startTime == params.endTime " class="workStatistics">在这期间({{ params.startTime.slice(0,10) }})使用软件共<span class="softColor">{{ tableData.admittanceSize+tableData.notStandardSize }}</span>项;</div>
+          <div v-else class="workStatistics">在这期间({{ params.startTime.slice(0,10) }} — {{ params.endTime.slice(0,10) }})使用软件共<span class="softColor">{{ tableData.admittanceSize+tableData.notStandardSize }}</span>项;</div>
+          <div class="workStatistics"><e-img class="banImg" src="/images/warn/ranking.png"></e-img>在【{{ tableData.deptName }}】排名第<span class="softColor">{{ tableData.ranking }}</span>名。</div>
+        </div>
+      </div>
+    </div>
+    <!-- 工作信息列表-工作日志 -->
+    <div v-if="warnActive == 2 && styleListFlag && warningList.length > 0" class="workUlTit">
+      <span>工作日志</span>
+    </div>
+    <e-loading class="bg-gray" :show="!styleListFlag"></e-loading>
+    <Scroll
+      v-if="styleListFlag"
+      v-show="warnActive == 2"
+      ref="workLogScroll"
+      :update-data="[warningList]"
+      :refresh-data="[]"
+      class="workLogScroll"
+      :probe-type="3"
+      :listen-scroll="true"
+      :scroll-x="false"
+      :scroll-y="true"
+      :auto-update="false"
+      @pullingDown="styleRefresh"
+      @pullingUp="styleLoadMore"
+    >
+      <div v-if="warningList && warningList.length > 0" class="workLog">
+        <div v-for="(item,index) in warningList" :key="index" class="workLi">
+          <span>{{ item.sotExeName }}</span>
+          <span :class="item.validType=='准入软件'?'adoptType':item.validType=='非标软件'?'banType':''">{{ item.validType }}</span>
+          <span>{{ item.validTime }}</span>
+        </div>
+      </div>
+      <div v-else style="text-align:center;padding-top:1px;">
+        <e-empty></e-empty>
+      </div>
+    </Scroll>
+    <!-- 优化记录列表 -->
     <div v-if="warnActive == 3 && styleListFlag" class="indexConOptimize">
-      <div class="workRecord" :class="query.bhdTimeUnit=='日' && !data?'':'recordActive'">
+      <div class="workRecord" :class="params.bhdTimeUnit=='日' && !data?'':'recordActive'">
         <div v-if="optimizationList && optimizationList.length > 0 " class="workListList">
           <div v-for="(item,index) in optimizationList" :key="index" class="workLi" @click="workDetailShow(item)">
             <span class="workLiEll">{{ item.backup }}</span>
@@ -124,34 +119,13 @@
           </div>
         </div>
         <div v-else class="workListList" style="text-align:center;">
-          <van-empty description="暂无数据" />
+          <e-empty></e-empty>
         </div>
       </div>
-      <div v-if="query.bhdTimeUnit=='日' && !data" class="workUl">
-        <!-- <span>优化记录</span> -->
-        <van-icon class="fire-o" size="38" color="#fff" name="fire-o" @click="optimizeShow()" />
+      <div v-if="params.bhdTimeUnit=='日' && !data" class="workUl">
+        <e-icon class="fire-o" size="38" color="#fff" name="fire-o" @click="optimizeShow()"></e-icon>
       </div>
     </div>
-    <!-- 优化描述弹出框 -->
-    <van-popup v-model="optimizeBoole" round style="width:80%;">
-      <van-cell-group style="padding:20px;">
-        <van-field
-          v-model="backup"
-          class="describe"
-          rows="10"
-          autosize
-          label=""
-          type="textarea"
-          maxlength="200"
-          placeholder="请输入优化描述"
-          show-word-limit
-        />
-      </van-cell-group>
-      <div class="confirmSbmit">
-        <span @click="cancel()">取 消</span>
-        <span @click="optimizeSubmit()">确 认</span>
-      </div>
-    </van-popup>
     <!-- 工作状态弹出层 -->
     <van-popup v-model="workStatusBoole" closeable round position="bottom" :style="{ height: '60%' }">
       <div class="popupUl">
@@ -166,11 +140,11 @@
           :pull-up="false"
         >
           <div class="popupContent">
-            <div v-if="query.startTime == query.endTime">在这期间({{ query.startTime.slice(0,10) }})共使用软件<span class="softColor">{{ tableData.admittanceSize+tableData.notStandardSize }}</span>项;</div>
-            <div v-else>在这期间({{ query.startTime.slice(0,10) }} — {{ query.endTime.slice(0,10) }})共使用软件<span class="softColor">{{ tableData.admittanceSize+tableData.notStandardSize }}</span>项;</div>
-            <div><img class="banImg" src="/static/imgs/access.png" />准入软件<span class="softNum">{{ tableData.admittanceSize }}</span>项,总使用时长<span class="softNum">{{ tableData.admittanceSum }}</span>;</div>
-            <div><img class="banImg" src="/static/imgs/noAccess.png" />非标软件<span class="softNumBan">{{ tableData.notStandardSize }}</span>项,总使用时长<span class="softNumBan">{{ tableData.notStandardSum }}</span>;</div>
-            <div><img class="banImg" src="/static/imgs/ranking.png" />在【{{ tableData.deptName }}】排名第<span class="softColor">{{ tableData.ranking }}</span>名。</div>
+            <div v-if="params.startTime == params.endTime">在这期间({{ params.startTime.slice(0,10) }})共使用软件<span class="softColor">{{ tableData.admittanceSize+tableData.notStandardSize }}</span>项;</div>
+            <div v-else>在这期间({{ params.startTime.slice(0,10) }} — {{ params.endTime.slice(0,10) }})共使用软件<span class="softColor">{{ tableData.admittanceSize+tableData.notStandardSize }}</span>项;</div>
+            <div><e-img class="banImg" src="/images/warn/access.png"></e-img>准入软件<span class="softNum">{{ tableData.admittanceSize }}</span>项,总使用时长<span class="softNum">{{ tableData.admittanceSum }}</span>;</div>
+            <div><e-img class="banImg" src="/images/warn/noAccess.png"></e-img>非标软件<span class="softNumBan">{{ tableData.notStandardSize }}</span>项,总使用时长<span class="softNumBan">{{ tableData.notStandardSum }}</span>;</div>
+            <div><e-img class="banImg" src="/images/warn/ranking.png"></e-img>在【{{ tableData.deptName }}】排名第<span class="softColor">{{ tableData.ranking }}</span>名。</div>
           </div>
         </Scroll>
       </div>
@@ -192,59 +166,78 @@
             <div><span>员工姓名：</span>{{ workDetail.userName }}</div>
             <div><span>优化描述：</span>{{ workDetail.backup }}</div>
             <div><span>优化时间：</span>{{ workDetail.createTime }}</div>
-            <!-- <div style="text-align:right">
-              <span>{{workDetail.userName}}</span>
-              <span>{{workDetail.createTime}}</span>
-            </div> -->
           </div>
         </Scroll>
+      </div>
+    </van-popup>
+    <!-- 优化描述弹出框 -->
+    <van-popup v-model="optimizeBoole" round style="width:80%;">
+      <van-cell-group style="padding:20px;">
+        <van-field
+          v-model="backup"
+          class="describe"
+          rows="10"
+          autosize
+          label=""
+          type="textarea"
+          maxlength="200"
+          placeholder="请输入优化描述"
+          show-word-limit
+        />
+      </van-cell-group>
+      <div class="confirmSbmit">
+        <span @click="cancel()">取 消</span>
+        <span @click="optimizeSubmit()">确 认</span>
       </div>
     </van-popup>
   </div>
 </template>
 
 <script>
+import { ELoading, EEmpty } from '@/components'
+import { Popup, Field } from 'vant'
+import Scroll from 'vue-slim-better-scroll'
 export default {
-  name: 'Index',
-  data() {
-    return {
-      title: '日志信息',
-      query: {
-        startTime: '',
-        endTime: '',
-      }, // 接受跳转传参
-      styleListFlag: false, // 加载lodding
+  name: 'WarnListDetail',
+  components: {
+    ELoading,
+    Scroll,
+    EEmpty,
+    [Popup.name]: Popup,
+    [Field.name]: Field,
+  },
+  data: () => ({
+    title: '日志信息',
+    // 接受跳转传参
+    params: {
+      startTime: '',
+      endTime: '',
+    },
+    styleListFlag: false, // 加载lodding
 
-      tableData: {}, // 总数据集合
-      bhdLog: [], // 预警记录
-      optimizationList: [], // 优化记录
-      warningList: [], // 工作日志
-      pageNum: 1,
-      pageSize: 12,
-      totalCount: '',
-      optimizeBoole: false, // 优化弹框
-      backup: '', // 优化描述内容
-      workStatusBoole: false, // 工作状态弹出层
-      workLiBoole: false, // 优化记录弹出层
-      warnActive: 1,
-      data: {},
-      workDetail: {},
-    }
-  },
-  created() {},
-  mounted() {
-    // this.query = this.$route.query.item;
-    // console.log(this.query);
-    // this.searchInfo();
-    // this.query = this.$route.query.item
-  },
-  activated() {
+    tableData: {}, // 总数据集合
+    bhdLog: [], // 预警记录
+    optimizationList: [], // 优化记录
+    warningList: [], // 工作日志
+    pageNum: 1,
+    pageSize: 12,
+    totalCount: '',
+    optimizeBoole: false, // 优化弹框
+    backup: '', // 优化描述内容
+    workStatusBoole: false, // 工作状态弹出层
+    workLiBoole: false, // 优化记录弹出层
+    warnActive: 1,
+    data: {},
+    workDetail: {},
+  }),
+  created() {
+    console.log('details created')
     this.styleListFlag = false
-    this.bhdLog = []
-    this.warningList = []
-    this.optimizationList = []
-    this.query = this.$route.query.list
-    this.data = this.$route.query.data
+    // this.bhdLog = []
+    // this.warningList = []
+    // this.optimizationList = []
+    this.params = this.$route.params.list
+    this.data = this.$route.params.data
     if (localStorage.isProcessed === 1 && !this.data) {
       this.processedInfo()// 调用已处理
     } else if (localStorage.isProcessed === 2) {
@@ -254,6 +247,10 @@ export default {
     setTimeout(() => {
       this.searchInfo()
     }, 500)
+  },
+  mounted() {},
+  activated() {
+    console.log('details activated')
   },
   methods: {
     workDetailShow(item) {
@@ -271,29 +268,7 @@ export default {
     statusShow() {
       this.workStatusBoole = true
     },
-    // 返回
-    back() {
-      if (this.data) {
-        this.$router.push(
-          {
-            path: '/WarnUserList',
-            query: {
-              list: this.data,
-            },
-          },
-        )
-      } else {
-        // this.$router.go(-1);
-        this.$router.push(
-          {
-            path: '/Warn',
-            query: {
-              specialVal: 2,
-            },
-          },
-        )
-      }
-    },
+
     //  优化
     optimizeShow() {
       this.optimizeBoole = true
@@ -308,8 +283,8 @@ export default {
       // alarm/getWarningLog
       const _this = this
       const params = {
-        bhdId: this.query.ewId,
-        userId: localStorage.userId,
+        bhdId: this.params.ewId,
+        userId: this.$store.getters.userData.userId,
         // 备注
         backup: this.backup,
       }
@@ -329,7 +304,6 @@ export default {
     styleRefresh() {
       this.pageNum = 1
       this.searchInfo()
-      // this.$refs.workLogScroll.update(true);
     },
     styleLoadMore() {
       if (this.totalCount > this.warningList.length) {
@@ -344,14 +318,14 @@ export default {
       // / alarm/getWarningLog预警日志
       const _this = this
       const params = {
-        bhdId: this.query.ewId,
-        warmomgType: this.query.userName ? 0 : 1,
-        startTime: this.query.startTime.slice(0, 10) + ' 00:00',
-        endTime: this.query.endTime.slice(0, 10) + ' 23:59',
+        bhdId: this.params.ewId,
+        warmomgType: this.params.userName ? 0 : 1,
+        startTime: this.params.startTime.slice(0, 10) + ' 00:00',
+        endTime: this.params.endTime.slice(0, 10) + ' 23:59',
         pageNum: this.pageNum,
         pageSize: this.pageSize,
-        userId: this.query.userId ? this.query.userId : localStorage.userId,
-        code: this.query.bhdTimeUnit === '日' ? 0 : 1,
+        userId: this.params.userId ? this.params.userId : this.$store.getters.userData.userId,
+        code: this.params.bhdTimeUnit === '日' ? 0 : 1,
       }
       const jsonParam = this.GLOBAL.g_paramJson(params)
       _this.$axios
@@ -365,9 +339,6 @@ export default {
               _this.optimizationList = res.data.body.optimizationList
               _this.warningList = res.data.body.warningList
               _this.totalCount = res.data.body.count
-              if (_this.warningList.length === _this.totalCount) {
-                _this.$refs.workLogScroll.update(true)
-              }
             } else {
               _this.tableData = res.data.body
               _this.bhdLog = res.data.body.bhdLog
@@ -375,25 +346,20 @@ export default {
               _this.warningList = _this.warningList.concat(res.data.body.warningList)
               _this.totalCount = res.data.body.count
             }
-
-            // _this.tableData = res.data.body
-            // _this.bhdLog = res.data.body.bhdLog
-            // _this.optimizationList = res.data.body.optimizationList
-            // _this.warningList = res.data.body.warningList
           } else {
             _this.$toast(res.data.head.msg)
           }
         })
     },
     processedInfo() {
-      // /workSoftBase/addSoft新增已处理
+      // /workSoftBase/addSoft 添加到已查看
       const _this = this
       const params = {
         bhdId: localStorage.bhdId,
-        ewType: this.query.userName ? 0 : 1,
-        userId: localStorage.userId,
-        ewId: this.query.ewId,
-        orgId: localStorage.orgId,
+        ewType: this.params.userName ? 0 : 1,
+        userId: this.$store.getters.userData.userId,
+        ewId: this.params.ewId,
+        orgId: this.$store.getters.userData.orgId,
       }
       const jsonParam = this.GLOBAL.g_paramJson(params)
       _this.$axios
@@ -417,55 +383,6 @@ export default {
   flex-direction: column;
   box-sizing: border-box;
   background-color: #f5f5f5;
-  .header {
-    width: 100%;
-    height: 45px;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 16px;
-    color: #333;
-    box-sizing: border-box;
-    // background-color: #ffffff;
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    // padding: 0px 16px;
-    padding:0 3%;
-
-  }
-  .header .img{
-    height:45px;
-    display: flex;
-    align-items: center;
-  }
-  .header .img img {
-    width: 18px;
-    height: 18px;
-    padding-right:15px;
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-  }
-  .header .tit {
-    height: 45px;
-    line-height:45px;
-    font-size: 18px;
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-  }
-  .header .placeLabel {
-    height: 45px;
-    line-height:45px;
-    width: 33px;
-    text-align: center;
-  }
-
   .logTabs{
     width: 100%;
     box-sizing: border-box;
@@ -475,13 +392,11 @@ export default {
     margin-bottom:10px;
     display: flex;
     flex-direction: row;
-    // justify-content: space-between;
+    z-index:50;
     span{
       font-size: 15px;
       padding:7px 0;
       margin:0 10px;
-      line-height:30px;
-      height:30px;
       box-sizing: content-box;
     }
     .active{
@@ -523,7 +438,7 @@ export default {
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
-        img{
+        .banImg{
           width: 16px;
         }
         .more{
@@ -562,7 +477,7 @@ export default {
             font-size: 16px;
             color:#E30101;
           }
-          img{
+          .banImg{
             box-sizing: content-box;
             width:16px;
             height:16px;
@@ -584,7 +499,7 @@ export default {
     font-size: 14px;
     .workRecord {
       flex:1;
-      border-radius: 8px 8px 0 0;
+      border-radius: 8px;
       background:#fff;
       display: flex;
       flex-direction: column;
@@ -630,8 +545,6 @@ export default {
       border-radius: 8px;
     }
     .workUl {
-      border-top: 2px solid #f5f5f5;
-      border-radius: 0 0 8px 8px;
       font-weight: bolder;
       line-height:28px;
       padding: 5px 10px;
@@ -640,8 +553,9 @@ export default {
       align-items: center;
       justify-content: center;
       margin-bottom: 10px;
-      background:#fff;
-      img{
+      // background:#fff;
+      z-index:50;
+      .banImg{
         width: 16px;
       }
       .fire-o{
@@ -792,7 +706,7 @@ export default {
   .workLogScroll{
     width:94%;
     margin: 0 3% 10px 3%;
-    font-size: 28px;
+    font-size: 14px;
     border-radius:  0 0 8px 8px;
     flex:1;
     display: flex;
@@ -889,7 +803,7 @@ export default {
           font-size: 16px;
           color:#E30101;
         }
-        img{
+        .banImg{
           width:16px;
           height:16px;
           display: inline-block;
@@ -912,8 +826,5 @@ export default {
       line-height: 20px;
     }
   }
-  // /deep/ .van-empty__description{
-  //   font-size:28px;
-  // }
 }
 </style>

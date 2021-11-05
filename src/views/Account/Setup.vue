@@ -5,15 +5,15 @@
       <ul>
         <li @click="toSecret">
           <span class="item-tit">修改密码</span>
-          <e-icon name="arrow" />
+          <e-icon name="arrow"></e-icon>
         </li>
         <li @click="toAbout">
           <span class="item-tit">关于我们</span>
-          <e-icon name="arrow" />
+          <e-icon name="arrow"></e-icon>
         </li>
         <li @click="toFeedback">
           <span class="item-tit">意见反馈</span>
-          <e-icon name="arrow" />
+          <e-icon name="arrow"></e-icon>
         </li>
         <li>
           <span class="item-tit">版&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;本</span>
@@ -42,8 +42,7 @@ export default {
     },
     exit() {
       this.$dialog.confirm('确定退出当前账号?').then(() => {
-        localStorage.clear()
-        sessionStorage.clear()
+        this.$store.dispatch('logOut')
 
         this.$router.replace('/login')
       })

@@ -33,19 +33,12 @@ export default {
 
   },
   methods: {
-    back() {
-      this.oldPassword = ''
-      this.password = ''
-      this.realPassword = ''
-      this.$router.go(-1)
-    },
     change() {
-      const _this = this
-      if (_this.password === '' || _this.realPassword === '') {
+      if (this.password === '' || this.realPassword === '') {
         this.$toast('密码不能为空!')
         return false
       }
-      if (_this.password !== _this.realPassword) {
+      if (this.password !== this.realPassword) {
         this.$toast('两次密码不一致!')
         return false
       }
@@ -57,13 +50,14 @@ export default {
       }
       const jsonParam = this.GLOBAL.g_paramJson(param)
       // api update
-      _this.$axios.post(this.GLOBAL.systemServer + '/user/updatePassWord', jsonParam)
-        .then(function(res) {
+      this.$axios.post(this.GLOBAL.systemServer + '/user/updatePassWord', jsonParam)
+        .then((res) => {
           const data = res.data
           if (data.head.status === 0) {
             this.$toast('修改成功')
-            _this.$router.replace({
-              path: '/login',
+            this.$store.dispatch('logOut')
+            this.$router.replace({
+              name: 'Login',
             })
           } else {
             this.$toast('修改失败')
@@ -74,8 +68,6 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-
 <style scoped>
 .main {
     display: flex;
@@ -83,37 +75,11 @@ export default {
     color: #333333;
     font-family: PingFang-SC-Medium;
     font-size: 15px;
+    background-color: var(--white);
 }
+/* .page{
 
-.header {
-    height: 1.2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 18px;
-}
-
-.header div {
-    padding-left: 0.4rem;
-    padding-right: 0.4rem;
-    height: 1rem;
-    display: flex;
-    align-items: center;
-}
-
-.header .right {
-    font-size: 14px;
-    padding-right: 0.4rem;
-}
-
-.header img {
-    height: 0.4rem;
-}
-
-.page {
-    /* border-top:0.5px solid #ccc;  */
-}
-
+} */
 .page ul {
     background-color: #FFFFFF;
     display: flex;
@@ -121,7 +87,6 @@ export default {
     padding: 0 15px;
     width: 100%;
     margin: 10px auto;
-    border-radius: 12px;
     box-sizing: border-box;
 }
 

@@ -1,22 +1,15 @@
 <template>
   <div id="index" @touchmove.prevent>
-    <!-- <div class='header'>
-      <div class="img" @click="back">
-        <img class="banImg" src="/static/imgs/back.png" >
-      </div>
-      <span class="tit">{{query.departName}}</span>
-      <span class="placeLabel" ></span>
-    </div> -->
-    <e-header :title="query.departName" border @back="back"></e-header>
+    <e-header :title="params.departName" border></e-header>
     <div class="logTabs">
       <span :class="warnActive==0?'active':''" @click="warnShow(0)">预警人员</span>
       <span :class="warnActive==1?'active':''" @click="warnShow(1)">预警记录</span>
       <span :class="warnActive==2?'active':''" @click="warnShow(2)">工作信息</span>
       <span :class="warnActive==3?'active':''" @click="warnShow(3)">优化记录</span>
     </div>
-    <div v-if="!styleListFlag"><van-loading color="#00a2ea" /></div>
+    <e-loading :show="styleListFlag"></e-loading>
     <Scroll
-      v-if="warnActive == 0 && styleListFlag"
+      v-if="warnActive == 0 && !styleListFlag"
       ref="workGroupScroll"
       :update-data="[resultList]"
       :refresh-data="[]"
@@ -32,7 +25,7 @@
       <div v-if="resultList && resultList.length > 0">
         <div v-for="(list,index) in resultList" :key="index" class="mineTopBox" @click="detailShow(list)">
           <div class="title">
-            <van-icon class="title-img" :name="list.userName?'manager-o':'cluster-o'" />
+            <e-icon class="title-img" :name="list.userName?'manager-o':'cluster-o'"></e-icon>
             <div class="title-li">
               <span class="title-span">{{ list.departName?list.departName:list.userName }}</span>
               <span v-if="list.startTime == list.endTime" class="title-date">{{ list.startTime.slice(0,10) }}</span>
@@ -76,12 +69,12 @@
         </div>
       </div>
       <div v-else style="text-align:center;padding-top:1px;">
-        <van-empty description="暂无数据" />
+        <e-empty></e-empty>
       </div>
     </Scroll>
     <!-- ------------------------------------------------------------------ -->
     <Scroll
-      v-if="warnActive == 1 && styleListFlag"
+      v-if="warnActive == 1 && !styleListFlag"
       ref="warnLogScroll"
       :update-data="[bhdLog]"
       :refresh-data="[]"
@@ -97,9 +90,9 @@
       <div v-if="bhdLog && bhdLog.length > 0" class="warnLog">
         <div v-for="(list,index) in bhdLog" :key="index" class="mineTopBox">
           <div class="title">
-            <van-icon class="title-img" :name="query.userName?'manager-o':'cluster-o'" />
+            <e-icon class="title-img" :name="params.userName?'manager-o':'cluster-o'"></e-icon>
             <div class="title-li">
-              <span class="title-span">{{ query.departName?query.departName:query.userName }}</span>
+              <span class="title-span">{{ params.departName?params.departName:params.userName }}</span>
               <span class="title-date">{{ list.createTime }}</span>
             </div>
           </div>
@@ -132,31 +125,30 @@
         </div>
       </div>
       <div v-else style="text-align:center;padding-top:1px;">
-        <van-empty description="暂无数据" />
+        <e-empty></e-empty>
       </div>
     </Scroll>
 
-    <div v-if="warnActive == 2 && warningList && warningList.length > 0 && styleListFlag" class="indexConLog">
+    <div v-if="warnActive == 2 && warningList && warningList.length > 0 && !styleListFlag" class="indexConLog">
       <div class="workList" @click="statusShow()">
         <div class="workUl">
           <span>工作状态</span>
           <div>
             <span class="more">更多</span>
-            <van-icon name="arrow" color="#999" />
+            <e-icon name="arrow" color="#999"></e-icon>
           </div>
-          <!-- <img src="/static/imgs/rightArrowGrey.png" > -->
         </div>
         <div class="workLi">
-          <div v-if="query.startTime == query.endTime " class="workStatistics">{{ query.departName }}共<span class="softColor">{{ tableData.daptCount }}</span>人,在这期间({{ query.startTime.slice(0,10) }})使用软件共<span class="softColor">{{ tableData.admittanceSize+tableData.notStandardSize }}</span>项;</div>
-          <div v-else class="workStatistics">{{ query.departName }}在这期间({{ query.startTime.slice(0,10) }} — {{ query.endTime.slice(0,10) }})使用软件共<span class="softColor">{{ tableData.admittanceSize+tableData.notStandardSize }}</span>项;</div>
+          <div v-if="params.startTime == params.endTime " class="workStatistics">{{ params.departName }}共<span class="softColor">{{ tableData.daptCount }}</span>人,在这期间({{ params.startTime.slice(0,10) }})使用软件共<span class="softColor">{{ tableData.admittanceSize+tableData.notStandardSize }}</span>项;</div>
+          <div v-else class="workStatistics">{{ params.departName }}在这期间({{ params.startTime.slice(0,10) }} — {{ params.endTime.slice(0,10) }})使用软件共<span class="softColor">{{ tableData.admittanceSize+tableData.notStandardSize }}</span>项;</div>
         </div>
       </div>
     </div>
-    <div v-if="warnActive == 2 && styleListFlag" class="workUlTit">
+    <div v-if="warnActive == 2 && !styleListFlag && warningList.length > 0" class="workUlTit">
       <span>工作日志</span>
     </div>
     <Scroll
-      v-if="warnActive == 2 && styleListFlag"
+      v-if="warnActive == 2 && !styleListFlag"
       ref="workLogScroll"
       :update-data="[warningList]"
       :refresh-data="[]"
@@ -177,15 +169,15 @@
         </div>
       </div>
       <div v-else style="text-align:center;padding-top:1px;">
-        <van-empty description="暂无数据" />
+        <e-empty></e-empty>
       </div>
     </Scroll>
-    <div v-if="warnActive == 3 && styleListFlag" class="indexConOptimize">
+    <div v-if="warnActive == 3 && !styleListFlag" class="indexConOptimize">
       <div class="workRecord">
       </div>
     </div>
     <Scroll
-      v-if="warnActive == 3 && styleListFlag"
+      v-if="warnActive == 3 && !styleListFlag"
       ref="workListList"
       :update-data="[optimizationList]"
       :refresh-data="[]"
@@ -206,7 +198,7 @@
         </div>
       </div>
       <div v-else style="text-align:center;">
-        <van-empty description="暂无数据" />
+        <e-empty></e-empty>
       </div>
     </Scroll>
     <van-popup v-model="optimizeBoole" round style="width:80%;">
@@ -242,10 +234,10 @@
           :pull-up="false"
         >
           <div class="popupContent">
-            <div v-if="query.startTime == query.endTime" class="odiv">{{ query.departName }}共<span class="softColor">{{ tableData.daptCount }}</span>人,在这期间({{ query.startTime.slice(0,10) }})使用软件共<span class="softColor">{{ tableData.admittanceSize+tableData.notStandardSize }}</span>项;</div>
-            <div v-else class="odiv">{{ query.departName }}共<span class="softColor">{{ tableData.daptCount }}</span>人,在这期间({{ query.startTime.slice(0,10) }} — {{ query.endTime.slice(0,10) }})使用软件共<span class="softColor">{{ tableData.admittanceSize+tableData.notStandardSize }}</span>项;</div>
-            <div><img class="banImg" src="/static/imgs/access.png" />准入软件<span class="softNum">{{ tableData.admittanceSize }}</span>项,总使用时长<span class="softNum">{{ tableData.admittanceSum }}</span>;</div>
-            <div><img class="banImg" src="/static/imgs/noAccess.png" />非标软件<span class="softNumBan">{{ tableData.notStandardSize }}</span>项,总使用时长<span class="softNumBan">{{ tableData.notStandardSum }}</span> ;</div>
+            <div v-if="params.startTime == params.endTime" class="odiv">{{ params.departName }}共<span class="softColor">{{ tableData.daptCount }}</span>人,在这期间({{ params.startTime.slice(0,10) }})使用软件共<span class="softColor">{{ tableData.admittanceSize+tableData.notStandardSize }}</span>项;</div>
+            <div v-else class="odiv">{{ params.departName }}共<span class="softColor">{{ tableData.daptCount }}</span>人,在这期间({{ params.startTime.slice(0,10) }} — {{ params.endTime.slice(0,10) }})使用软件共<span class="softColor">{{ tableData.admittanceSize+tableData.notStandardSize }}</span>项;</div>
+            <div><e-img class="banImg" src="/images/warn/access.png"></e-img>准入软件<span class="softNum">{{ tableData.admittanceSize }}</span>项,总使用时长<span class="softNum">{{ tableData.admittanceSum }}</span>;</div>
+            <div><e-img class="banImg" src="/images/warn/noAccess.png"></e-img>非标软件<span class="softNumBan">{{ tableData.notStandardSize }}</span>项,总使用时长<span class="softNumBan">{{ tableData.notStandardSum }}</span> ;</div>
           </div>
         </Scroll>
       </div>
@@ -275,13 +267,23 @@
 </template>
 
 <script>
+import { ELoading, EEmpty } from '@/components'
+import { Popup, Field } from 'vant'
+import Scroll from 'vue-slim-better-scroll'
 export default {
   name: 'Index',
-  data() {
+  components: {
+    ELoading,
+    Scroll,
+    EEmpty,
+    [Popup.name]: Popup,
+    [Field.name]: Field,
+  },
+  data: () => {
     return {
-      styleListFlag: false,
+      styleListFlag: true,
       isLoading: false, // lodding
-      query: {
+      params: {
         startTime: '',
         endTime: '',
       }, // 接受跳转传参
@@ -317,14 +319,14 @@ export default {
       },
     }
   },
-  created() {},
-  mounted() {},
-  activated() {
-    this.styleListFlag = false
-    this.bhdLog = []
-
-    this.query = this.$route.query.list
-    if (localStorage.isProcessed === 1) {
+  created() {
+    console.debug('user created')
+    this.styleListFlag = true
+    // this.bhdLog = []
+    if (this.$route.params.list) {
+      this.params = this.$route.params.list
+    }
+    if (Number(localStorage.isProcessed) === 1) {
       this.processedInfo()
     }
     this.warnActive = 0
@@ -332,28 +334,23 @@ export default {
       this.searchInfoUser()
     }, 500)
   },
+  mounted() {},
+  activated() {
+    console.debug('user activated')
+  },
   methods: {
     workDetailShow(item) {
       this.workLiBoole = true
       this.workDetail = item
     },
-    // 返回
-    back() {
-      this.$router.push({
-        path: '/Warn',
-        query: {
-          specialVal: 2,
-        },
-      })
-    },
     //  跳转至工作日志
     detailShow(list) {
       this.$router.push(
         {
-          path: '/WarnListDetail',
-          query: {
+          name: 'WarnListDetail',
+          params: {
             list: list,
-            data: this.query,
+            data: this.params,
           },
         },
       )
@@ -376,25 +373,22 @@ export default {
     searchInfoUser() {
       const _this = this
       const par = {
-        deptId: this.query.deptId,
+        deptId: this.params.deptId,
         bhdId: localStorage.bhdId,
         pageNum: this.pageNumUser,
         pageSize: this.pageSizeUser,
-        startTime: this.query.startTime,
-        endTime: this.query.endTime,
+        startTime: this.params.startTime,
+        endTime: this.params.endTime,
       }
       const jsonPar = this.GLOBAL.g_paramJson(par)
       _this.$axios
         .post(this.GLOBAL.alarmServer + '/alarm/getDeptBhdList', jsonPar)
         .then(function(res) {
-          _this.styleListFlag = true
+          _this.styleListFlag = false
           if (res.data.head.status === 0) {
             if (_this.pageNumUser === 1) {
               _this.resultList = res.data.body.userBhd
               _this.totalCountUser = res.data.body.totalCount
-              if (_this.resultList.length === _this.totalCountUser) {
-                _this.$refs.workGroupScroll.update(true)
-              }
             } else {
               _this.resultList = _this.resultList.concat(res.data.body.userBhd)
               _this.totalCountUser = res.data.body.totalCount
@@ -408,18 +402,17 @@ export default {
     processedInfo() {
       const _this = this
       const params = {
-        bhdId: localStorage.bhdId,
-        ewType: this.query.userName ? 0 : 1,
-        userId: localStorage.userId,
-        ewId: this.query.ewId,
-        orgId: localStorage.orgId,
+        bhdId: Number(localStorage.bhdId),
+        ewType: this.params.userName ? 0 : 1,
+        userId: this.$store.getters.userData.userId,
+        ewId: this.params.ewId,
+        orgId: this.$store.getters.userData.orgId,
       }
       const jsonParam = this.GLOBAL.g_paramJson(params)
       _this.$axios
         .post(this.GLOBAL.alarmServer + '/alarm/addUserBhdData', jsonParam)
         .then(function(res) {
           if (res.data.head.status === 0) {
-            // _this.$toast(res.data.head.msg);
           } else {
             _this.$toast(res.data.head.msg)
           }
@@ -429,7 +422,7 @@ export default {
     // 预警记录
     warnShow(val) {
       this.warnActive = val
-      this.styleListFlag = false
+      this.styleListFlag = true
       if (val) {
         this.pageNumLog = 1
         this.searchInfoLog()
@@ -447,7 +440,6 @@ export default {
     styleRefreshLogDownbhdLog() {
       this.pageNumLog = 1
       this.searchInfoLog()
-      // this.$refs.workLogScroll.update(true);
     },
     // 下拉加载 预警记录
     styleLoadMoreLogUpbhdLog() {
@@ -462,7 +454,6 @@ export default {
     styleRefreshLog() {
       this.pageNumLog = 1
       this.searchInfoLog()
-      // this.$refs.workLogScroll.update(true);
     },
     // 下拉加载 工作日志
     styleLoadMoreLog() {
@@ -477,7 +468,6 @@ export default {
     styleRefreshLogDown() {
       this.pageNumLog = 1
       this.searchInfoLog()
-      // this.$refs.workLogScroll.update(true);
     },
     // 下拉加载 优化记录
     styleLoadMoreLogUp() {
@@ -493,19 +483,19 @@ export default {
       // / alarm/getWarningLog预警日志
       const _this = this
       const params = {
-        bhdId: this.query.ewId,
-        warmomgType: this.query.userName ? 0 : 1,
-        startTime: this.query.startTime.slice(0, 10) + ' 00:00',
-        endTime: this.query.endTime.slice(0, 10) + ' 23:59',
+        bhdId: this.params.ewId,
+        warmomgType: this.params.userName ? 0 : 1,
+        startTime: this.params.startTime.slice(0, 10) + ' 00:00',
+        endTime: this.params.endTime.slice(0, 10) + ' 23:59',
         pageNum: this.pageNumLog,
         pageSize: this.pageSizeLog,
-        deptId: this.query.deptId,
+        deptId: this.params.deptId,
       }
       const jsonParam = this.GLOBAL.g_paramJson(params)
       _this.$axios
         .post(this.GLOBAL.alarmServer + '/alarm/getWarningLog', jsonParam)
         .then(function(res) {
-          _this.styleListFlag = true
+          _this.styleListFlag = false
           if (res.data.head.status === 0) {
             if (_this.pageNumLog === 1) {
               _this.tableData = res.data.body
@@ -518,32 +508,27 @@ export default {
               _this.warningList = res.data.body.warningList// 工作日志
               _this.totalCount = res.data.body.count
 
-              if (_this.warnActive === 1) {
-                if (_this.bhdLog.length === _this.totalCount) {
-                  _this.$refs.warnLogScroll.update(true)
-                }
-              }
-              if (_this.warnActive === 2) {
-                if (_this.warningList.length === _this.totalCount) {
-                  _this.$refs.workLogScroll.update(true)
-                }
-              }
-              if (_this.warnActive === 3) {
-                if (_this.optimizationList.length === _this.optimizationCount) {
-                  _this.$refs.workListList.update(true)
-                }
-              }
+              // if (_this.warnActive === 1) {
+              //   if (_this.bhdLog.length === _this.totalCount) {
+              //     _this.$refs.warnLogScroll.update(true)
+              //   }
+              // }
+              // if (_this.warnActive === 2) {
+              //   if (_this.warningList.length === _this.totalCount) {
+              //     _this.$refs.workLogScroll.update(true)
+              //   }
+              // }
+              // if (_this.warnActive === 3) {
+              //   if (_this.optimizationList.length === _this.optimizationCount) {
+              //     _this.$refs.workListList.update(true)
+              //   }
+              // }
             } else {
               _this.tableData = res.data.body
               _this.bhdLog = _this.bhdLog.concat(res.data.body.bhdLog)
               _this.warningList = _this.warningList.concat(res.data.body.warningList)
               _this.optimizationList = _this.optimizationList.concat(res.data.body.optimizationList)
             }
-
-            // _this.tableData = res.data.body
-            // _this.bhdLog = res.data.body.bhdLog
-            // _this.optimizationList = res.data.body.optimizationList
-            // _this.warningList = res.data.body.warningList
           } else {
             _this.$toast(res.data.head.msg)
           }
@@ -553,8 +538,6 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-
 <style lang="less" scoped>
 #index {
   width: 100%;
@@ -563,89 +546,31 @@ export default {
   flex-direction: column;
   box-sizing: border-box;
   background-color: #f5f5f5;
-  //padding: 20px 24px;
-
-  .header {
-    width: 100%;
-    height: 1.2rem;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 32px;
-    color: #333;
-    box-sizing: border-box;
-    // background-color: #ffffff;
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    // padding: 0px 16px;
-    padding:0 3%;
-
-  }
-  .header .img{
-    height:1.2rem;
-    display: flex;
-    align-items: center;
-  }
-  .header .img img {
-    width: 36px;
-    height: 36px;
-    padding-right:30px;
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-  }
-  .header .tit {
-    height: 1.2rem;
-    line-height:1.2rem;
-    font-size: 36px;
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-  }
-  .header .placeLabel {
-    height: 1.2rem;
-    line-height:1.2rem;
-    width: 66px;
-    text-align: center;
-  }
   .box {
     width: 100%;
-    height: 80px;
-    // line-height: 1.2rem;
+    height: 40px;
     display: flex;
     background-color: #ffffff;
-    // border-bottom: 2px solid #f5f5f5;
     justify-content: center;
 
     .box-list {
-      //width: 100%;
-      width: 500px;
+      width: 250px;
       -webkit-box-flex: 1;
-      // flex: 1;
-      // overflow: hidden;
       display: flex;
       flex-direction: row;
-      // align-items: center;
       justify-content: space-between;
-      height: 80px;
-      // box-sizing: border-box;
+      height: 40px;
       li {
-        font-size: 30px;
+        font-size: 15px;
         color: #333;
         white-space: nowrap;
-        // box-sizing: border-box;
-        margin: 0 30px;
-        height: 60px;
-        line-height: 60px;
-        padding:7px 0;
+        margin: 0 15px;
+        height: 30px;
+        line-height: 30px;
+        padding:3.5px 0;
       }
       .active {
-        border-bottom: 6px solid #00cc65;
+        border-bottom: 3px solid #00cc65;
       }
 
     }
@@ -654,70 +579,63 @@ export default {
     flex: 1;
     overflow: hidden;
     width:94%;
-    margin: 0 3% 20px 3%;
-    // /deep/ .van-empty__description{
-    //   font-size:28px;
-    // }
+    margin: 0 3% 10px 3%;
 
     .mineTopBox {
       display: flex;
       flex-direction: column;
-      font-size: 28px;
+      font-size: 14px;
       align-items: center;
       box-sizing: border-box;
       background-color: #ffffff;
-      border-radius: 16px;
+      border-radius: 8px;
       color: #333;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
       position: relative;// 为子元素定位
 
       .title {
         width: 100%;
-        border-bottom: 4px solid #f5f5f5;
-        height: 80px;
+        border-bottom: 2px solid #f5f5f5;
+        height: 40px;
         display: flex;
         flex-direction: row;
         align-items: center;
 
         .title-img {
-          padding:10px 10px 0 10px;
-          font-size: 40px;
+          padding:5px 5px 0 5px;
+          font-size: 20px;
         }
         .title-li{
           flex:1;
           display: flex;
           flex-direction: row;
           align-items:baseline ;
-          padding-top:20px;
+          padding-top:10px;
           .title-span {
-            width:120px;
+            width:60px;
             font-weight: bolder;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
           }
           .title-date{
-            font-size: 24px;
-            // color:#a0a0a0;
-            // font-weight: bolder;
+            font-size: 12px;
             flex:1;
-            // padding-left:60px;
             text-align:left;
           }
         }
         .title-arrow {
-          margin-left:120px;
+          margin-left:60px;
           width: 0;
           height: 0;
-          border-top: 30px solid #a0a0a0;
-          border-right: 30px solid #a0a0a0;
-          border-bottom: 30px solid transparent;
-          border-left: 30px solid transparent;
-          border-radius: 0 16px 0 0;
+          border-top: 15px solid #a0a0a0;
+          border-right: 15px solid #a0a0a0;
+          border-bottom: 15px solid transparent;
+          border-left: 15px solid transparent;
+          border-radius: 0 8px 0 0;
           display:flex;
           align-self:flex-start;
         }
-
         .title-day {
           position: absolute;
           right: 0;
@@ -725,62 +643,59 @@ export default {
           color: #ffffff;
         }
       }
-
       .content-box {
         width: 100%;
-        height: 160px;
-        font-size: 26px;
+        height: 80px;
+        font-size: 13px;
         display: flex;
         flex-direction: row;
         align-items: center;
         /deep/ .vue-slim-better-scroll__wrapper{
-          // height:100%!important;
-          // background-color: pink;
           display: flex;
           flex-direction: row;
-          // >div{
-          //   width: 100% !important;
-          // }
         }
         .content-box-li {
           flex: 1;
           text-align: center;
-          padding: 20px 0;
+          padding: 10px 0;
           .list-li{
             .color_grey {
               color: #333;
-              padding-bottom: 10px;
+              padding-bottom: 5px;
+            }
+            .color-low{
+              color:#00CC65;
             }
             .color-in{
-              color:#00CC65;
+              color:#FFA500;
             }
             .color-top{
               color:#E30101;
             }
           }
           .list-border{
-            border-right:2px solid #f5f5f5;
+            border-right:1px solid #f5f5f5;
           }
         }
       }
 
       .mf20 {
-        margin-left: 20px;
+        margin-left: 10px;
       }
 
       .mf60 {
-        margin-left: 60px;
+        margin-left: 30px;
       }
 
       .tabMark {
         position: absolute;
         top: 0;
         left: 0;
-        height: 40px;
+        height: 20px;
       }
 
       .more-icon {
-        width: 12px;
+        width: 6px;
         vertical-align: baseline;
         float: right;
       }
@@ -790,24 +705,23 @@ export default {
   .logTabs{
     width: 100%;
     box-sizing: border-box;
-    // margin-top:20px;
-    padding:0 20px;
-    height:80px;
+    padding:0 10px;
+    height:40px;
     background:#fff;
-    margin-bottom:20px;
+    margin-bottom:10px;
     display: flex;
     flex-direction: row;
-    // justify-content: space-between;
+    z-index:50;
     span{
-      font-size: 30px;
-      padding:7px 0;
-      margin:0 20px;
-      line-height:60px;
-      height:60px;
+      font-size: 15px;
+      padding:3.5px 0;
+      margin:0 10px;
+      line-height:30px;
+      height:30px;
       box-sizing: content-box;
     }
     .active{
-      border-bottom:6px solid #00cc65;
+      border-bottom:3px solid #00cc65;
     }
   }
 
@@ -815,36 +729,35 @@ export default {
     box-sizing: content-box;
     font-weight: bolder;
     margin:0 3%;
-    font-size: 28px;
-    height:56px;
-    line-height:56px;
-    padding: 10px 20px;
+    font-size: 14px;
+    height:28px;
+    line-height:28px;
+    padding: 5px 10px;
     background:#fff;
-    border-bottom: 4px solid #f5f5f5;
-    border-radius:  16px 16px 0 0;
+    border-bottom: 2px solid #f5f5f5;
+    border-radius:  8px 8px 0 0;
   }
   .indexConLog {
     display: flex;
     flex-direction: column;
     width:94%;
     margin:0 3% ;
-    font-size: 28px;
+    font-size: 14px;
     .workList {
       background:#fff;
-      border-radius: 16px;
-      margin-bottom: 20px;
-      // height:320px;
+      border-radius: 8px;
+      margin-bottom: 10px;
       .workUl {
-        border-bottom: 4px solid #f5f5f5;
+        border-bottom: 2px solid #f5f5f5;
         font-weight: bolder;
-        line-height:56px;
-        padding:10px 20px;
+        line-height:28px;
+        padding:5px 10px;
         display: flex;
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
-        img{
-          width: 32px;
+        .banImg{
+          width: 16px;
         }
         .more{
           color:#999;
@@ -854,101 +767,62 @@ export default {
         flex:1;
         display: flex;
         flex-direction: column;
-        justify-content: center;
-        padding: 10px 20px;
-        border-bottom: 4px solid #f5f5f5;
+        line-height:28px;
+        padding: 5px 10px;
+        border-bottom: 2px solid #f5f5f5;
         .workStatistics{
-          // text-indent:2em;
-          line-height: 56px;
           text-overflow: -o-ellipsis-lastline;
           overflow: hidden;
+          padding:2px 0;
           text-overflow: ellipsis;
           display: -webkit-box;
           -webkit-line-clamp: 2;
           line-clamp: 2;
           -webkit-box-orient: vertical;
           .softColor{
-            font-size: 32px;
-            // color:#fccb02;
+            font-size: 16px;
             color:#FFA500;
           }
           .softNum{
-            font-size: 32px;
+            font-size: 16px;
             color:#00CC65;
           }
           .softNumBan{
-            font-size: 32px;
+            font-size: 16px;
             color:#E30101;
           }
-          img{
-            width:32px;
-            height:32px;
+          .banImg{
+            width:16px;
+            height:16px;
             vertical-align: middle;
-            padding-right:10px;
-            padding-bottom:5px;
+            padding-right:5px;
+            padding-bottom:2.5px;
           }
         }
       }
     }
   }
   .indexConOptimize{
-    // flex:1;
     display: flex;
     flex-direction: column;
     width:94%;
     margin:0 3% ;
-    font-size: 28px;
+    font-size: 14px;
     .workRecord {
-      // flex:1;
-      border-radius: 16px 16px 0 0;
+      border-radius: 8px 8px 0 0;
       background:#fff;
-      // margin-bottom: 20px;
-      // height:320px;
       .workUl {
-        border-bottom: 4px solid #f5f5f5;
+        border-bottom: 2px solid #f5f5f5;
         font-weight: bolder;
-        line-height:56px;
-        padding: 10px 20px;
+        padding: 5px 10px;
         display: flex;
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
-        img{
-          width: 32px;
+        .banImg{
+          width: 16px;
         }
       }
-      // .workListList{
-      //   flex:1;
-      //   display: flex;
-      //   flex-direction: column;
-      //   .workLi{
-      //     flex:1;
-      //     display: flex;
-      //     flex-direction: row;
-      //     justify-content: space-between;
-      //     line-height:56px;
-      //     padding: 5px 20px;
-      //     border-bottom: 4px solid #f5f5f5;
-      //     .workLiEll{
-      //       white-space:nowrap;
-      //       overflow:hidden;
-      //       text-overflow:ellipsis;
-      //     }
-      //     span{
-      //       flex:1;
-      //     }
-      //     span:nth-child(1){
-      //       flex:2
-      //     }
-      //     span:nth-child(2){
-      //       flex:1;
-      //       text-align: center;
-      //     }
-      //     span:nth-child(3){
-      //       text-align: right;
-      //     }
-      //   }
-      // }
     }
   }
 
@@ -957,19 +831,19 @@ export default {
     width:94%;
     margin:0 3%;
     display: flex;
-    font-size:28px;
+    font-size:14px;
     flex-direction: column;
-    border-radius: 16px 16px 16px 16px;
+    border-radius: 8px;
     background:#fff;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     .workLi{
       flex:1;
       display: flex;
       flex-direction: row;
       justify-content: space-between;
 
-      padding: 10px 20px;
-      border-bottom: 4px solid #f5f5f5;
+      padding: 5px 10px;
+      border-bottom: 2px solid #f5f5f5;
       .workLiEll{
         white-space:nowrap;
         overflow:hidden;
@@ -977,8 +851,8 @@ export default {
       }
       span{
         flex:1;
-        height:56px;
-        line-height:56px;
+        height:28px;
+        line-height:28px;
       }
       span:nth-child(1){
         flex:2
@@ -996,16 +870,14 @@ export default {
 
   .warnLogScroll{
     flex: 1;
-    font-size: 28px;
-    border-radius:  0 0 16px 16px;
+    font-size: 14px;
+    border-radius:  0 0 8px 8px;
     display: flex;
     flex-direction: column;
-    // box-sizing: border-box;
     overflow: hidden;
-    // background:#fff;
     margin: 0 3%;
     width:94%;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     .warnLog{
       flex:1;
       display: flex;
@@ -1013,58 +885,55 @@ export default {
       .mineTopBox {
         display: flex;
         flex-direction: column;
-        font-size: 28px;
+        font-size: 14px;
         align-items: center;
         box-sizing: border-box;
         background-color: #ffffff;
-        border-radius: 16px;
+        border-radius: 8px;
         color: #333;
-        margin-bottom: 20px;
+        margin-bottom: 10px;
         position: relative;// 为子元素定位
 
         .title {
           width: 100%;
-          border-bottom: 4px solid #f5f5f5;
-          height: 80px;
+          border-bottom: 2px solid #f5f5f5;
+          height: 40px;
           display: flex;
           flex-direction: row;
           align-items: center;
 
           .title-img {
-            padding:10px 10px 0 10px;
-            font-size: 40px;
+            padding:5px 5px 0 5px;
+            font-size: 20px;
           }
           .title-li{
             flex:1;
             display: flex;
             flex-direction: row;
             align-items:baseline ;
-            padding-top:20px;
+            padding-top:10px;
             .title-span {
-              width:120px;
+              width:60px;
               font-weight: bolder;
               white-space: nowrap;
               overflow: hidden;
               text-overflow: ellipsis;
             }
             .title-date{
-              font-size: 24px;
-              // color:#a0a0a0;
-              // font-weight: bolder;
+              font-size: 12px;
               flex:1;
-              // padding-left:60px;
               text-align:left;
             }
           }
           .title-arrow {
-            margin-left:120px;
+            margin-left:60px;
             width: 0;
             height: 0;
-            border-top: 30px solid #a0a0a0;
-            border-right: 30px solid #a0a0a0;
-            border-bottom: 30px solid transparent;
-            border-left: 30px solid transparent;
-            border-radius: 0 16px 0 0;
+            border-top: 15px solid #a0a0a0;
+            border-right: 15px solid #a0a0a0;
+            border-bottom: 15px solid transparent;
+            border-left: 15px solid transparent;
+            border-radius: 0 8px 0 0;
             display:flex;
             align-self:flex-start;
           }
@@ -1079,19 +948,19 @@ export default {
 
         .content-box {
           width: 100%;
-          height: 160px;
-          font-size: 26px;
+          height: 80px;
+          font-size: 13px;
           display: flex;
           flex-direction: row;
           align-items: center;
           .content-box-li {
             flex: 1;
             text-align: center;
-            padding: 20px 0;
+            padding: 10px 0;
             .list-li{
               .color_grey {
                 color: #333;
-                padding-bottom: 10px;
+                padding-bottom: 5px;
               }
               .color-low{
                 color:#00CC65;
@@ -1110,18 +979,18 @@ export default {
         }
 
         .mf20 {
-          margin-left: 20px;
+          margin-left: 10px;
         }
 
         .mf60 {
-          margin-left: 60px;
+          margin-left: 30px;
         }
 
         .tabMark {
           position: absolute;
           top: 0;
           left: 0;
-          height: 40px;
+          height: 20px;
         }
 
         .more-icon {
@@ -1134,9 +1003,9 @@ export default {
   }
   .workLogScroll{
     width:94%;
-    margin: 0 3% 20px 3%;
-    font-size: 28px;
-    border-radius:  0 0 16px 16px;
+    margin: 0 3% 10px 3%;
+    font-size: 14px;
+    border-radius:  0 0 8px 8px;
     flex:1;
     display: flex;
     flex-direction: column;
@@ -1151,9 +1020,9 @@ export default {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
-        line-height:56px;
-        padding: 10px 20px;
-        border-bottom: 4px solid #f5f5f5;
+        line-height:28px;
+        padding: 5px 10px;
+        border-bottom: 2px solid #f5f5f5;
         span{
           flex:1;
           text-overflow: ellipsis;
@@ -1189,37 +1058,35 @@ export default {
       display: flex;
       align-items: center;
       justify-content: center;
-      line-height:80px;
+      line-height:40px;
     }
   }
 
   .optimize{
-    height: 60px;
-    line-height:60px;
+    height: 30px;
+    line-height:30px;
     width:94%;
     margin:0 3%;
-    margin-bottom:20px;
+    margin-bottom:10px;
     text-align: center;
     background:#fff;
   }
   // 工作状态弹出层
   .popupUl{
     .popupTitle{
-      line-height:56px;
-      padding: 5px 20px;
-      font-size: 28px;
+      line-height:28px;
+      padding: 2.5px 10px;
+      font-size: 14px;
       font-weight: bold;
-      border-bottom: 4px solid #f5f5f5;
+      border-bottom: 2px solid #f5f5f5;
     }
     .popupContent{
-      font-size: 28px;
-      padding: 5px 20px;
+      font-size: 14px;
+      padding: 2.5px 10px;
       .odiv{
         display:flex;
         align-items: center;
-        // text-indent:2em;
-        line-height:56px;
-        padding:10px 0;
+        padding:5px 0;
         text-overflow: -o-ellipsis-lastline;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -1231,43 +1098,41 @@ export default {
       div{
         display:flex;
         align-items: center;
-        // text-indent:2em;
-        line-height:56px;
-        padding:10px 0;
+        line-height:28px;
+        padding:5px 0;
         .softColor{
-          font-size: 32px;
-          // font-weight: bold;
+          font-size: 16px;
           color:#FFA500;
         }
         .softNum{
-          font-size: 32px;
+          font-size: 16px;
           color:#00CC65;
         }
         .softNumBan{
-          font-size: 32px;
+          font-size: 16px;
           color:#E30101;
         }
-        img{
+        .banImg{
           box-sizing: content-box;
           display: inline;
-          width:32px;
-          height:32px;
+          width:16px;
+          height:16px;
           vertical-align: middle;
-          padding-right:10px;
+          padding-right:5px;
         }
       }
     }
   }
   .describe{
-    font-size: 28px;
-    line-height: 40px;
+    font-size: 14px;
+    line-height: 20px;
     /deep/ .van-field__control{
-      font-size: 28px;
-      line-height: 40px;
+      font-size: 14px;
+      line-height: 20px;
     }
     /deep/ .van-field__word-limit{
-      font-size: 28px;
-      line-height: 40px;
+      font-size: 14px;
+      line-height: 20px;
     }
   }
 }

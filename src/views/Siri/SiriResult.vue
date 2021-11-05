@@ -6,8 +6,8 @@
     </div> -->
     <e-loading :show="classLoading"></e-loading>
     <div v-if="!classLoading" class="page">
-      <div class="li-title input-border">
-        <img class="helpImg" src="/static/imgs/help.png" />
+      <div class="li-title">
+        <img class="helpImg" src="/images/siri/help.png" />
         <span>{{ sentence }}</span>
       </div>
       <div v-if="timeFrame.startTime && timeFrame.startTime == timeFrame.endTime" class="info">查询时间（{{ timeFrame.startTime }}）</div>
@@ -254,8 +254,6 @@ export default {
       display: flex;
       flex-direction: row;
       align-items: center;
-      width:94%;
-      height:30px;
       padding: 5px 3%;
       background: #f0f0f0;
       border: none;

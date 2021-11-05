@@ -20,5 +20,8 @@
 <script>
 export default {
   name: 'About',
+  methods: {
+
+  },
 }
 </script>

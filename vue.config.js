@@ -15,7 +15,7 @@ module.exports = {
   devServer: {
     port: 8000,
     // 后端API地址
-    proxy: 'http://ox98jgp.nat.ipyingshe.com:80/api/',
+    proxy: 'http://192.168.9.71:7071/',
   },
   productionSourceMap: !production,
   css: {

@@ -108,6 +108,7 @@ export default {
       }).then(res => {
         const userStatic = res.body.static
         if (userStatic === STATIC_TYPES.SUCCESS) {
+          iframe.loginSuccess()
           this.$router.replace({ name: 'Home' })
         } else if (userStatic === STATIC_TYPES.NOT_EXIST) {
           this.$toast.fail('用户不存在')
