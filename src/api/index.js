@@ -1,6 +1,9 @@
 import Axios from 'axios'
 import store from '@/store'
 import API_STATUS from '@/api/API_STATUS'
+import { Toast } from 'vant'
+import router from '@/router'
+import { isNil } from 'lodash'
 
 // axios配置
 const axiosConfig = {
@@ -35,13 +38,29 @@ axios.interceptors.response.use(response => {
   return Promise.reject(error)
 })
 
+function HandlingError(code, tips) {
+  let message
+
+  switch (code) {
+    case API_STATUS.UNAUTHORIZED:
+      message = '登录失效，请重新登录'
+      router.to('Login')
+      break
+  }
+
+  tips
+  && !isNil(code)
+  && !isNil(message)
+  && Toast.fail(message)
+}
+
 /**
  * post封装
  * @param {string} url 请求地址
  * @param {object} params 请求参数
  * @param {object} config 配置
  */
-export function post(url, params = {}, config = {}) {
+export function post(url, params = {}, config = { tips: true }) {
   const userData = store.getters.userData
 
   const formattedParams = {
@@ -69,6 +88,7 @@ export function post(url, params = {}, config = {}) {
       return Promise.reject(res.data)
     }
   }).catch(err => {
+    HandlingError(err.isAxiosError ? err.response?.status : err.head?.status, config.tips)
     return Promise.reject(err)
   })
 }

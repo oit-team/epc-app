@@ -1,18 +1,18 @@
 <template>
-  <div class="flex-1 flex flex-col">
-    <e-header v-if="$route.meta.page" title="参数"></e-header>
+  <div class="flex-1 flex flex-col relative">
+    <e-header v-if="$route.meta.page" :title="portraitData.userInfo.userName"></e-header>
     <div class="flex bg-white items-center justify-between pl-2 pr-3">
-      <e-tabs class="data-type">
+      <e-tabs v-model="dataType" class="data-type">
         <e-tab title="基础信息"></e-tab>
         <e-tab title="风险管理"></e-tab>
       </e-tabs>
-      <e-icon>filter-list</e-icon>
+      <e-icon v-if="!$route.meta.page" @click="showCalendar = true">filter-list</e-icon>
     </div>
 
-    <div class="p-2 flex-1 flex flex-col">
+    <div v-if="dataType === 0" class="p-2 flex-1 flex flex-col">
       <e-panel class="mb-2">
         <template #title>
-          <div class="text-center leading-none">2021/10/10 - 2021/10/30</div>
+          <div class="text-center leading-none">{{ startTime }} - {{ endTime }}</div>
         </template>
         <div class="flex">
           <div class="border-r border-gray w-2/5 text-center py-2 px-1">
@@ -47,6 +47,16 @@
         <e-charts :option="chartOption"></e-charts>
       </e-panel>
     </div>
+    <div v-else-if="dataType === 1"></div>
+
+    <e-loading :promise="loadingPromise"></e-loading>
+    <van-calendar
+      v-model="showCalendar"
+      type="range"
+      :min-date="minDate"
+      :max-date="maxDate"
+      @confirm="confirmCalendar"
+    />
   </div>
 </template>
 
@@ -55,6 +65,7 @@ import { ETabs, ETab, EPanel, ECharts } from '@/components'
 import theme from '@/theme'
 import * as api from '@/api/portrait'
 import { getDaysAgo, formatDate } from '@/utils/helper'
+import { Calendar } from 'vant'
 
 export default {
   name: 'PortraitData',
@@ -64,14 +75,22 @@ export default {
     ETab,
     EPanel,
     ECharts,
+    [Calendar.name]: Calendar,
   },
 
   data: () => ({
-    score: 58,
     portraitData: {
       userInfo: {},
       portrait: {},
     },
+
+    dataType: 0,
+    loadingPromise: null,
+    showCalendar: false,
+    startTime: getDaysAgo(30),
+    endTime: formatDate(Date.now()),
+    minDate: new Date(getDaysAgo(365)),
+    maxDate: new Date(),
   }),
 
   computed: {
@@ -142,7 +161,7 @@ export default {
     },
   },
 
-  created() {
+  onLoad() {
     this.userId = this.$route.params.id ?? this.$store.getters.userData.userId
 
     this.getMyPortrait()
@@ -150,13 +169,19 @@ export default {
 
   methods: {
     getMyPortrait() {
-      api.getMyPortrait({
-        startTime: getDaysAgo(30),
-        endTime: formatDate(Date.now()),
+      this.loadingPromise = api.getMyPortrait({
+        startTime: this.startTime,
+        endTime: this.endTime,
         userId: this.userId,
       }).then(res => {
         this.portraitData = res.body.userRanking[0]
       })
+    },
+    confirmCalendar([start, end]) {
+      this.startTime = formatDate(start)
+      this.endTime = formatDate(end)
+      this.showCalendar = false
+      this.getMyPortrait()
     },
   },
 }

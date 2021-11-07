@@ -45,13 +45,6 @@ import * as api from '@/api/user'
 import { ELoading } from '@/components'
 import iframe from '@/utils/iframe'
 
-const STATIC_TYPES = {
-  // 验证成功
-  SUCCESS: 0,
-  // 用户不存在
-  NOT_EXIST: 1,
-}
-
 export default {
   name: 'Login',
 
@@ -98,22 +91,8 @@ export default {
       })
     },
     checkLogin() {
-      const userData = this.$store.getters.userData
-
       this.showLoading = true
-      api.selUserByID({
-        id: userData.userId,
-        orgId: userData.orgId,
-        status: 0,
-      }).then(res => {
-        const userStatic = res.body.static
-        if (userStatic === STATIC_TYPES.SUCCESS) {
-          iframe.loginSuccess()
-          this.$router.replace({ name: 'Home' })
-        } else if (userStatic === STATIC_TYPES.NOT_EXIST) {
-          this.$toast.fail('用户不存在')
-        }
-      }).finally(() => {
+      this.$store.dispatch('checkLogin', false).finally(() => {
         this.showLoading = false
       })
     },

@@ -2,6 +2,10 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import storage from '@/utils/storage'
 import { isNil, isEmpty } from 'lodash'
+import { selUserByID } from '@/api/user'
+import iframe from '@/utils/iframe'
+import router from '@/router'
+import { Toast } from 'vant'
 
 Vue.use(Vuex)
 
@@ -32,6 +36,13 @@ function saveToStoreAndStorage(key, state, data, defer = true) {
   return state[key]
 }
 
+const STATIC_TYPES = {
+  // 验证成功
+  SUCCESS: 0,
+  // 用户不存在
+  NOT_EXIST: 1,
+}
+
 export default new Vuex.Store({
   state: {
     // 用户数据
@@ -52,6 +63,25 @@ export default new Vuex.Store({
     logOut(ctx) {
       localStorage.clear()
       ctx.commit('SAVE_USER_DATA', {})
+    },
+    checkLogin(ctx, tips = true) {
+      const userData = ctx.getters.userData
+
+      return selUserByID({
+        id: userData.userId,
+        orgId: userData.orgId,
+        status: 0,
+      }, tips).then(res => {
+        const userStatic = res.body.static
+
+        if (userStatic === STATIC_TYPES.SUCCESS) {
+          iframe.loginSuccess()
+          router.replace({ name: 'Home' })
+        } else if (userStatic === STATIC_TYPES.NOT_EXIST) {
+          Toast.fail('用户不存在')
+          router.replace({ name: 'Login' })
+        }
+      })
     },
   },
 })

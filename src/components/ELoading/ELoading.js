@@ -7,6 +7,7 @@ export default {
 
   props: {
     show: Boolean,
+    promise: [Promise],
     vertical: {
       default: true,
     },
@@ -18,9 +19,30 @@ export default {
 
   data: () => ({
     innerShow: false,
+    innerPromise: null,
   }),
 
+  watch: {
+    promise() {
+      this.innerPromise = this.promise
+      this.watchPromise()
+    },
+  },
+
+  created() {
+    if (this.promise) {
+      this.innerPromise = this.promise
+      this.watchPromise()
+    }
+  },
+
   methods: {
+    watchPromise() {
+      this.innerShow = true
+      this.innerPromise.finally(() => {
+        this.innerShow = false
+      })
+    },
     genLoading() {
       if (this.innerShow) {
         return this.$createElement(Loading, {
@@ -32,22 +54,23 @@ export default {
   },
 
   render(h) {
-    const delay = typeof this.delay === 'boolean'
-    ? (this.delay ? 200 : false)
-    : (this.delay > 0 ? this.delay : false)
+    if (!this.promise) {
+      const delay = typeof this.delay === 'boolean'
+                    ? (this.delay ? 200 : false)
+                    : (this.delay > 0 ? this.delay : false)
 
-    if (this.show) {
-      if (delay) {
-        setTimeout(() => {
+      if (this.show) {
+        if (delay) {
+          setTimeout(() => {
+            this.innerShow = true
+          }, delay)
+        } else {
           this.innerShow = true
-        }, delay)
+        }
       } else {
-        this.innerShow = true
+        this.innerShow = false
       }
-    } else {
-      this.innerShow = false
     }
-
     return this.genLoading()
   },
 }

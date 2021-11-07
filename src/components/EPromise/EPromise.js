@@ -1,4 +1,4 @@
-import { ELoading } from '@/components'
+import { ELoading, EEmpty } from '@/components'
 
 import './EPromise.scss'
 
@@ -12,11 +12,13 @@ export default {
   props: {
     promise: [Promise],
     loading: Boolean,
+    always: Boolean,
   },
 
   data: () => ({
     innerPromise: null,
     state: '',
+    loaded: false,
   }),
 
   watch: {
@@ -33,8 +35,11 @@ export default {
 
   methods: {
     watchPromise() {
+      if (this.loaded) return
+
       this.state = PENDING
       this.innerPromise.then(data => {
+        if (!this.always) this.loaded = true
         this.state = FULFILLED
         return data
       }).catch(err => {
@@ -43,19 +48,20 @@ export default {
       })
     },
     genPendingSlot() {
-      if (this.state === PENDING) {
         if (this.loading)
           return this.$createElement(ELoading, { props: { show: true } })
         else
           return this.$scopedSlots.pending?.()
-      }
     },
     genDefaultSlot() {
-      console.log(this.$scopedSlots.default?.())
-      if (this.state === FULFILLED) return this.$scopedSlots.default?.()
+      return this.$scopedSlots.default?.()
     },
     genRejectedSlot() {
-      if (this.state === REJECTED) return this.$scopedSlots.rejected?.()
+      if (this.$scopedSlots.rejected) {
+        return this.$scopedSlots.rejected()
+      } else {
+        return this.$createElement(EEmpty)
+      }
     },
   },
 
@@ -63,12 +69,5 @@ export default {
     if (this.state === PENDING) return this.genPendingSlot()
     if (this.state === FULFILLED) return this.genDefaultSlot()
     if (this.state === REJECTED) return this.genRejectedSlot()
-    // return h('div', {
-    //   class: 'e-promise',
-    // }, [
-    //   this.genPendingSlot(),
-    //   this.genDefaultSlot(),
-    //   this.genRejectedSlot(),
-    // ])
   },
 }

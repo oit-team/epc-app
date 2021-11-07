@@ -17,6 +17,8 @@ import { EGrid, EGridItem } from './EGrid'
 import EPanel from './EPanel'
 import EBadge from './EBadge'
 import ECell from './ECell'
+import EInfiniteLoading from './EInfiniteLoading'
+import EPullRefresh from './EPullRefresh'
 
 // 需要全局注册的组件，使用频繁的组件可以放在这里
 const commonComponents = [
@@ -25,6 +27,10 @@ const commonComponents = [
   EHeader,
   EIcon,
   EDivider,
+  ELoading,
+  EPromise,
+  EInfiniteLoading,
+  EPullRefresh,
 ]
 
 // 全局注册组件
@@ -51,4 +57,6 @@ export {
   EPanel,
   EBadge,
   ECell,
+  EInfiniteLoading,
+  EPullRefresh,
 }

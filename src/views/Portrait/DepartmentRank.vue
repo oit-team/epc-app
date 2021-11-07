@@ -1,19 +1,27 @@
 <template>
   <div class="p-2 flex-1 flex flex-col overflow-hidden">
+    <div class="-mt-2 -mx-2 mb-2 flex items-center bg-white">
+      <e-icon class="px-3" @click="showCalendar = true">filter-list</e-icon>
+    </div>
     <e-panel>
       <rank-item index="1" :item="{}"></rank-item>
     </e-panel>
     <e-panel class="flex-1 mt-2 overflow-hidden">
-      <div class="divide-y divide-gray">
-        <rank-item v-for="(item, index) of 20" :key="index" :index="index"></rank-item>
-      </div>
+      <e-pull-refresh>
+        <e-infinite-loading>
+          <div class="divide-y divide-gray">
+            <rank-item v-for="(item, index) of 20" :key="index" :index="index"></rank-item>
+          </div>
+        </e-infinite-loading>
+      </e-pull-refresh>
     </e-panel>
   </div>
 </template>
 
 <script>
-import { EPanel } from '@/components'
+import { EPanel, EInfiniteLoading, EPullRefresh } from '@/components'
 import * as api from '@/api/portrait'
+import { formatDate, getDaysAgo } from '@/utils/helper'
 
 const RankItem = {
   props: {
@@ -39,20 +47,21 @@ export default {
   components: {
     EPanel,
     RankItem,
+    EInfiniteLoading,
+    EPullRefresh,
   },
 
-  created() {
+  onLoad() {
     this.getDeptPortrait()
   },
 
   methods: {
     getDeptPortrait() {
       api.getDeptPortrait({
-        startTime: '',
-        endTime: '',
-        deptId: '',
+        startTime: getDaysAgo(30),
+        endTime: formatDate(Date.now()),
+        deptId: '202',
       }).then(res => {
-        console.log(res)
       })
     },
   },

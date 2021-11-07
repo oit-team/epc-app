@@ -11,7 +11,7 @@ import './directives'
 import './mixin'
 import '@/assets/icons'
 import theme from './theme'
-import eruda from 'eruda'
+// import eruda from 'eruda'
 
 import 'tailwindcss/tailwind.css'
 import './styles/index.scss'
@@ -23,7 +23,7 @@ Object.entries(theme).forEach(([name, value]) => {
   document.querySelector('html').style.setProperty(`--${name}`, value)
 })
 
-eruda.init()
+// eruda.init()
 
 Vue.config.productionTip = false
 

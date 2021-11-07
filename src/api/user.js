@@ -17,7 +17,8 @@ export function loginAccount(params) {
  * @param {number} params.id 用户ID
  * @param {number} params.orgId 机构ID
  * @param {number} params.status
+ * @param {boolean} tips 是否显示提示
  */
-export function selUserByID(params) {
-  return post(API_SERVICE.SYSTEM + '/user/selUserByID', params)
+export function selUserByID(params, tips = true) {
+  return post(API_SERVICE.SYSTEM + '/user/selUserByID', params, { tips })
 }

@@ -14,7 +14,9 @@
 
     <e-divider />
 
-    <router-view></router-view>
+    <div class="relative flex flex-col flex-1 overflow-hidden">
+      <router-view></router-view>
+    </div>
   </div>
 </template>
 

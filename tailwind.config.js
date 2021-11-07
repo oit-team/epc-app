@@ -10,6 +10,7 @@ const spacing = (() => {
 })()
 
 module.exports = {
+  important: '#app',
   purge: [
     './src/**/*.vue',
   ],

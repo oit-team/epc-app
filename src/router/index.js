@@ -39,6 +39,9 @@ const routes = [
   {
     name: 'Login',
     component: Login,
+    meta: {
+      keepAlive: false,
+    },
   },
   {
     name: 'Account',

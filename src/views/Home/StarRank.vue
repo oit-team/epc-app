@@ -50,11 +50,11 @@
         :option="useTimeChartOption"
       ></e-charts>
       <e-empty v-if="chartEmpty"></e-empty>
-      <e-loading :show="chartLoading"></e-loading>
+      <e-loading class="bg-gray" :show="chartLoading"></e-loading>
     </div>
 
     <e-empty v-if="pageEmpty"></e-empty>
-    <e-loading :show="pageLoading"></e-loading>
+    <e-loading class="bg-gray" :show="pageLoading"></e-loading>
     <e-picker
       ref="picker"
       :columns="dateFilterColumns"
