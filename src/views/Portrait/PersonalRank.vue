@@ -1,37 +1,50 @@
 <template>
-  <e-promise :promise="loadingPromise" loading>
-    <e-pull-refresh class="p-2 pt-0 flex-1 flex flex-col overflow-hidden relative" @refresh="refresh">
-      <div class="-mx-2 mb-2 flex items-center bg-white">
-        <van-search
-          v-model="searchText"
-          class="flex-1 p-1 pr-0"
-          clear-trigger="always"
-          @input="() => (getUserPortrait(), null)"
-        ></van-search>
-        <e-icon class="px-3" @click="showCalendar = true">filter-list</e-icon>
+  <e-promise :promise="loadingPromise" loading root>
+    <div class="filter-bar px-2 text-secondary">
+      <van-search
+        v-model="searchText"
+        class="py-1 px-0 flex-1 text-secondary"
+        clear-trigger="always"
+        @input="() => (getUserPortrait(), null)"
+      ></van-search>
+      <div class="flex items-center bg-gray self-stretch my-1 ml-1 px-2 w-3/5" @click="showCalendar = true">
+        <e-icon class="pr-2">filter-list</e-icon>
+        <span>{{ startTime }} - {{ endTime }}</span>
       </div>
+    </div>
+
+    <div class="flex-1 flex flex-col p-2 overflow-hidden">
       <e-panel>
         <rank-item :index="selfData.userInfo.ranking" :item="selfData" self></rank-item>
       </e-panel>
-      <e-panel class="flex-1 mt-2 overflow-hidden relative">
-        <div class="divide-y divide-gray">
-          <rank-item
-            v-for="item of portraitList"
-            :key="item.userInfo.userId"
-            :item="item"
-            :index="item.userInfo.ranking"
-          ></rank-item>
-        </div>
+      <e-panel class="flex-1 mt-2 relative">
+        <!--        <e-pull-refresh class="" @refresh="refresh">-->
+        <e-infinite-loading pager @load="loadData">
+          <div class="divide-y divide-gray">
+            <rank-item
+              v-for="item of portraitList"
+              :key="item.userInfo.userId"
+              :item="item"
+              :index="item.userInfo.ranking"
+              :params="{
+                startTime,
+                endTime,
+              }"
+            ></rank-item>
+          </div>
+        </e-infinite-loading>
+        <!--        </e-pull-refresh>-->
         <e-empty v-if="dataEmpty"></e-empty>
       </e-panel>
-      <van-calendar
-        v-model="showCalendar"
-        type="range"
-        :min-date="minDate"
-        :max-date="maxDate"
-        @confirm="confirmCalendar"
-      />
-    </e-pull-refresh>
+    </div>
+
+    <van-calendar
+      v-model="showCalendar"
+      type="range"
+      :min-date="minDate"
+      :max-date="maxDate"
+      @confirm="confirmCalendar"
+    />
   </e-promise>
 </template>
 
@@ -46,6 +59,7 @@ const RankItem = {
     index: [Number, String],
     item: Object,
     self: Boolean,
+    params: {},
   },
 
   render(h) {
@@ -56,7 +70,7 @@ const RankItem = {
     return (
         <div
             class="flex items-center py-2 text-center"
-            vOn:click={() => this.$router.to(path)}
+            vOn:click={() => this.$router.to(path, this.params, true)}
         >
           <div class="text-primary w-1/6">{this.index}</div>
           <e-img class="rounded-lg mr-2" src={userInfo.telephone} size="50"></e-img>
@@ -97,22 +111,28 @@ export default {
   }),
 
   onLoad() {
-    this.loadingPromise = this.getUserPortrait()
+    this.loadingPromise = this.getUserPortrait().catch((err) => {
+      this.dataEmpty = true
+      this.portraitList = []
+      return Promise.reject(err)
+    }).finally(() => {
+      this.loadingPromise = null
+    })
   },
 
   methods: {
-    getUserPortrait() {
+    getUserPortrait(page = 1) {
       return api.getUserPortrait({
         startTime: this.startTime,
         endTime: this.endTime,
         userName: this.searchText,
+        pageNum: page,
+        pageSize: 20,
       }).then(res => {
+        this.portraitList = page === 1 ? res.body.portraitList : this.portraitList.concat(res.body.portraitList)
         this.selfData = res.body.userRanking[0]
-        this.portraitList = res.body.portraitList
         this.dataEmpty = false
-      }).catch(() => {
-        this.portraitList = []
-        this.dataEmpty = true
+        return res.body.portraitList
       })
     },
     confirmCalendar([start, end]) {
@@ -124,9 +144,21 @@ export default {
     refresh($state) {
       this.getUserPortrait().then($state.loaded).catch($state.error)
     },
+    loadData($state) {
+      const promise = this.loadingPromise !== null ? this.loadingPromise : this.getUserPortrait($state.page)
+      promise.then(res => {
+        res.length === 0 ? $state.finished() : $state.loaded()
+      }).catch($state.error)
+    },
   },
 }
 </script>
 
 <style lang="scss" scoped>
+</style>
+
+<style lang="scss">
+.van-field__control {
+  color: var(--secondary)
+}
 </style>

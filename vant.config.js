@@ -20,4 +20,6 @@ module.exports = {
 
   'cell-font-size': '1rem',
   'cell-right-icon-color': 'var(--gray-3)',
+
+  'search-content-background-color': 'var(--gray)',
 }

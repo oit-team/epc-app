@@ -14,9 +14,7 @@
 
     <e-divider />
 
-    <div class="relative flex flex-col flex-1 overflow-hidden">
-      <router-view></router-view>
-    </div>
+    <router-view class="flex-1 flex flex-col relative overflow-hidden"></router-view>
   </div>
 </template>
 
@@ -51,5 +49,9 @@ export default {
 }
 </script>
 
-<style lang='scss' scoped>
+<style lang='scss'>
+.filter-bar {
+  @apply flex items-center bg-white text-sm px-2;
+  min-height: 44px;
+}
 </style>

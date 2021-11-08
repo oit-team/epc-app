@@ -43,7 +43,7 @@ function HandlingError(code, tips) {
 
   switch (code) {
     case API_STATUS.UNAUTHORIZED:
-      message = '登录失效，请重新登录'
+      message = '会话超时，请重新登录'
       router.to('Login')
       break
   }
@@ -77,6 +77,19 @@ export function post(url, params = {}, config = { tips: true }) {
     con: params,
   }
 
+  let defer = null
+  // 根据传入的配置判断是否需要显示加载提示
+  if (config.loading) {
+    const type = typeof config.loading
+    const options = type === 'string' ? config.loading
+                    : type === 'boolean' ? {}
+                    : config.loading
+    // 低于设置的延迟则不显示loading
+    defer = setTimeout(() => {
+      Toast.loading(options)
+    }, 200)
+  }
+
   return axios({
     url,
     method: 'post',
@@ -90,6 +103,11 @@ export function post(url, params = {}, config = { tips: true }) {
   }).catch(err => {
     HandlingError(err.isAxiosError ? err.response?.status : err.head?.status, config.tips)
     return Promise.reject(err)
+  }).finally(() => {
+    if (config.loading) {
+      Toast.clear()
+      clearTimeout(defer)
+    }
   })
 }
 

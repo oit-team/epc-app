@@ -64,3 +64,22 @@ export function getSoftCountInfo(params) {
 export function getProposalInfo(params) {
   return post(API_SERVICE.REPORTING + '/portrait/getProposalInfo', params)
 }
+
+/**
+ * 查询部门筛选条件
+ */
+export function getDeptSearchInfo() {
+  return post(API_SERVICE.REPORTING + '/portrait/getDeptSearchInfo')
+}
+
+/**
+ * 查询部门排名
+ * @param {object} params
+ * @param {string} params.startTime 开始时间
+ * @param {string} params.endTime 结束时间
+ * @param {number} params.deptId 部门ID
+ * @param {boolean} loading 显示加载弹框
+ */
+export function getDeptRankingList(params, loading) {
+  return post(API_SERVICE.REPORTING + '/portrait/getDeptRankingList', params, { loading })
+}

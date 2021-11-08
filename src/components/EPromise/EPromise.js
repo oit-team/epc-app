@@ -13,6 +13,7 @@ export default {
     promise: [Promise],
     loading: Boolean,
     always: Boolean,
+    root: Boolean,
   },
 
   data: () => ({
@@ -35,7 +36,7 @@ export default {
 
   methods: {
     watchPromise() {
-      if (this.loaded) return
+      if (this.loaded || !this.innerPromise) return
 
       this.state = PENDING
       this.innerPromise.then(data => {
@@ -48,7 +49,7 @@ export default {
       })
     },
     genPendingSlot() {
-        if (this.loading)
+        if (this.loading && this.$scopedSlots.combined === undefined)
           return this.$createElement(ELoading, { props: { show: true } })
         else
           return this.$scopedSlots.pending?.()
@@ -63,11 +64,30 @@ export default {
         return this.$createElement(EEmpty)
       }
     },
+    genCombinedSlot() {
+      return this.$scopedSlots.combined?.({
+        pending: this.state === PENDING,
+        fulfilled: this.state === FULFILLED,
+        rejected: this.state === REJECTED,
+      })
+    },
   },
 
   render(h) {
-    if (this.state === PENDING) return this.genPendingSlot()
-    if (this.state === FULFILLED) return this.genDefaultSlot()
-    if (this.state === REJECTED) return this.genRejectedSlot()
+    if (this.root) {
+      const slots = []
+      slots.push(this.genDefaultSlot())
+      slots.push(this.genCombinedSlot())
+      if (this.state === PENDING) slots.push(this.genPendingSlot())
+      if (this.state === REJECTED) slots.push(this.genRejectedSlot())
+
+      return h('div', {
+        class: 'e-promise',
+      }, slots)
+    } else {
+      if (this.state === PENDING) return this.genPendingSlot()
+      if (this.state === FULFILLED) return this.genDefaultSlot()
+      if (this.state === REJECTED) return this.genRejectedSlot()
+    }
   },
 }

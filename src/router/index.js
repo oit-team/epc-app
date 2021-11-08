@@ -110,6 +110,9 @@ const routes = [
       {
         path: 'data',
         component: PortraitData,
+        meta: {
+          personal: true,
+        },
       },
       {
         path: 'data/personal/:id',
@@ -117,7 +120,6 @@ const routes = [
         meta: {
           personal: true,
           page: true,
-          auth: true,
         },
       },
       {

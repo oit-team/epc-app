@@ -1,9 +1,9 @@
 <template>
-  <div class="flex-1 flex flex-col relative">
-    <e-header v-if="$route.meta.page" :title="portraitData.userInfo.userName"></e-header>
-    <div class="flex bg-white items-center justify-between pl-2 pr-3">
+  <e-promise :promise="loadingPromise" loading root>
+    <e-header v-if="$route.meta.page" :title="portraitData.title"></e-header>
+    <div class="filter-bar justify-between pr-3">
       <e-tabs v-model="dataType" class="data-type">
-        <e-tab title="基础信息"></e-tab>
+        <e-tab title="基本信息"></e-tab>
         <e-tab title="风险管理"></e-tab>
       </e-tabs>
       <e-icon v-if="!$route.meta.page" @click="showCalendar = true">filter-list</e-icon>
@@ -20,12 +20,24 @@
               <span>{{ scoreSplit[0] }}</span>
               <span v-if="scoreSplit[1]" class="decimal">.{{ scoreSplit[1] }}</span>
             </div>
-            <div class="text-sm">资质分</div>
+            <div class="text-sm">{{ switchText('资质分', '执行力') }}</div>
           </div>
-          <div class="text-sm flex flex-col justify-between py-3 px-4">
-            <div>姓名：{{ portraitData.userInfo.userName }}</div>
-            <div>职位：{{ portraitData.userInfo.position }}</div>
-            <div>部门：{{ portraitData.userInfo.deptName }}</div>
+          <div
+            class="text-sm flex flex-col py-3 px-4"
+            :class="{
+              'justify-between': $route.meta.personal,
+              'justify-around': $route.meta.dept
+            }"
+          >
+            <template v-if="$route.meta.personal">
+              <div>姓名：{{ portraitData.userName }}</div>
+              <div>职位：{{ portraitData.position }}</div>
+              <div>部门：{{ portraitData.deptName }}</div>
+            </template>
+            <template v-else-if="$route.meta.dept">
+              <div>部门：{{ portraitData.deptName }}</div>
+              <div>人数：{{ portraitData.userCountNum }}</div>
+            </template>
           </div>
         </div>
       </e-panel>
@@ -37,8 +49,9 @@
               src="assets/images/portrait/c8021a9e914e4262eaee5071f9c3d3c5.png"
               size="16"
             ></e-img>
-            <span>职位排名：第</span>
-            <span class="text-primary text-lg leading-none"> {{ portraitData.userInfo.ranking }} </span>
+            <span>
+              {{ switchText('职位', '部门') }}排名：第</span>
+            <span class="text-primary text-lg leading-none"> {{ portraitData.ranking }} </span>
             <span>名</span>
           </div>
           <!--TODO-->
@@ -47,9 +60,9 @@
         <e-charts :option="chartOption"></e-charts>
       </e-panel>
     </div>
-    <div v-else-if="dataType === 1"></div>
+    <div v-else-if="dataType === 1">
+    </div>
 
-    <e-loading :promise="loadingPromise"></e-loading>
     <van-calendar
       v-model="showCalendar"
       type="range"
@@ -57,7 +70,7 @@
       :max-date="maxDate"
       @confirm="confirmCalendar"
     />
-  </div>
+  </e-promise>
 </template>
 
 <script>
@@ -79,10 +92,11 @@ export default {
   },
 
   data: () => ({
-    portraitData: {
+    personalData: {
       userInfo: {},
       portrait: {},
     },
+    deptData: {},
 
     dataType: 0,
     loadingPromise: null,
@@ -95,7 +109,7 @@ export default {
 
   computed: {
     scoreSplit() {
-      return String(this.portraitData.userInfo.qualificationNum)?.split('.')
+      return String(this.portraitData.qualificationNum)?.split('.')
     },
     chartOption() {
       const {
@@ -103,7 +117,7 @@ export default {
         eawPercent,
         forceExecutive,
         validTimePercent,
-      } = this.portraitData.portrait
+      } = this.portraitData
 
       return {
         grid: {
@@ -139,12 +153,13 @@ export default {
                 color: theme.primary,
               },
             },
-            label: {
-              show: true,
-              textStyle: {
-                color: theme['gray-1'],
-              },
-            },
+            // 不显示数字
+            // label: {
+            //   show: true,
+            //   textStyle: {
+            //     color: theme['gray-1'],
+            //   },
+            // },
             data: [
               {
                 value: [
@@ -159,22 +174,81 @@ export default {
         ],
       }
     },
+    portraitData() {
+      if (this.$route.meta.dept) {
+        const deptData = this.deptData
+        return {
+          title: deptData.departName,
+          ranking: deptData.ranking,
+          qualificationNum: deptData.qualificationNum,
+          userCountNum: deptData.userCountNum,
+          deptName: deptData.departName,
+          workAttitude: deptData.workAttitude,
+          eawPercent: deptData.eawPercent,
+          forceExecutive: deptData.forceExecutive,
+          validTimePercent: deptData.validTimePercent,
+        }
+      } else if (this.$route.meta.personal) {
+        const userInfo = this.personalData.userInfo
+        const portrait = this.personalData.portrait
+        return {
+          title: userInfo.userName,
+          ranking: userInfo.ranking,
+          qualificationNum: userInfo.qualificationNum,
+          userName: userInfo.userName,
+          position: userInfo.position,
+          deptName: userInfo.deptName,
+          workAttitude: portrait.workAttitude,
+          eawPercent: portrait.eawPercent,
+          forceExecutive: portrait.forceExecutive,
+          validTimePercent: portrait.validTimePercent,
+        }
+      }
+      return {}
+    },
   },
 
   onLoad() {
-    this.userId = this.$route.params.id ?? this.$store.getters.userData.userId
+    const {
+      query,
+      params,
+    } = this.$route
+    this.id = params.id ?? this.$store.getters.userData.userId
+    const {
+      startTime,
+      endTime,
+    } = query
+    this.startTime = startTime ?? this.startTime
+    this.endTime = endTime ?? this.endTime
 
-    this.getMyPortrait()
+    this.loadingPromise = this.loadData()
   },
 
   methods: {
+    loadData() {
+      const { meta } = this.$route
+      if (meta.dept) {
+        return this.getDeptPortrait()
+      } else if (meta.personal) {
+        return this.getMyPortrait()
+      }
+    },
     getMyPortrait() {
-      this.loadingPromise = api.getMyPortrait({
+      return api.getMyPortrait({
         startTime: this.startTime,
         endTime: this.endTime,
-        userId: this.userId,
+        userId: this.id,
       }).then(res => {
-        this.portraitData = res.body.userRanking[0]
+        this.personalData = res.body.userRanking[0]
+      })
+    },
+    getDeptPortrait() {
+      return api.getDeptPortrait({
+        startTime: this.startTime,
+        endTime: this.endTime,
+        deptId: this.id,
+      }).then(res => {
+        this.deptData = res.body.resultMap
       })
     },
     confirmCalendar([start, end]) {
@@ -182,6 +256,10 @@ export default {
       this.endTime = formatDate(end)
       this.showCalendar = false
       this.getMyPortrait()
+    },
+    switchText(text1, text2) {
+      if (this.$route.meta.personal) return text1
+      else if (this.$route.meta.dept) return text2
     },
   },
 }
