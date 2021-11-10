@@ -58,7 +58,7 @@
       <div style="height: 1px;"></div>
       <div v-if="tableDatas && tableDatas.length > 0" class="census">
         <div class="census-content">
-          <van-icon class="icon-des" size="20" name="description" />
+          <e-icon class="icon-des" size="20" name="description"></e-icon>
           <span class>
             <span v-for="(item,index) in tableData.row" :key="index">
               <span v-if="index == tableData.row.length-1">{{ item.dspValue }}<span class="census-span">{{ item.dspData }}</span>。</span>
@@ -115,7 +115,7 @@ export default {
     paramJson: {},
     keyWordIndex: 0,
     timeFrame: '',
-    classLoading: true, // 加载效果
+    classLoading: false, // 加载效果
     resultType: '',
     pageNum: 1,
     pageSize: 10,
@@ -123,16 +123,17 @@ export default {
     apiUrl: '',
   }),
   mounted() {
-    // 方法定义到window上面
-    window.siriQueryDetail = this.siriQueryDetail
-    iframe.getQueryDetail(this.$route.query.msgId)
+    // 此页面是由原生跳转进入,方法定义到window上面(原生会通过window.方法调用)
+    iframe.getQueryDetail(this.$route.query.msgId).then(res => {
+      this.siriQueryDetail(res)
+    })
   },
   methods: {
     // 返回到语音助手
     back() {
       iframe.switchToSiri()
     },
-    // 重复真实姓名切换
+    // 重复真实姓名(+1处理) 切换
     keyWordShow(index) {
       this.keyWordIndex = index
       if (index === 0) {
@@ -144,7 +145,7 @@ export default {
     // 原生调用
     siriQueryDetail(data) {
       this.pageNum = 1
-      const siriData = JSON.parse(data) // 字符串转json，严格转换，属性跟值必须加"":""
+      const siriData = data // 字符串转json，严格转换，属性跟值必须加"":""
       this.sentence = siriData.sentence
       if (siriData.resultJson.countInfo) {
         this.tableDataList = siriData.resultJson.countInfo
@@ -167,7 +168,7 @@ export default {
       this.paramJson = siriData.paramJson
       this.keyWord = siriData.paramJson.keyWord
       this.timeFrame = siriData.timeFrame
-      // 等这个方法执行完以后，loading为false
+      // 调用后端接口
       this.getStylesList()
     },
     // 下拉刷新
@@ -186,6 +187,14 @@ export default {
     },
     // 分页请求接口 查询
     getStylesList() {
+      /**
+       * 原生传过来的(paramJson,sentence,apiUrl)
+       * @param {Object} paramJson
+       * @param {String} sentence
+       * @param {String} apiUrl
+       * @param {String} pageNum
+       * @param {String} pageSize
+       */
       const params = {}
       params.paramJson = this.paramJson
       params.apiUrl = this.apiUrl
@@ -255,7 +264,7 @@ export default {
       flex-direction: row;
       align-items: center;
       padding: 5px 3%;
-      background: #f0f0f0;
+      background: #E0E0E0;
       border: none;
       .helpImg{
         box-sizing: content-box;
@@ -267,7 +276,7 @@ export default {
     .info {
       height:40px;
       line-height:40px;
-      color: #999999;
+      color: #999;
       padding: 0 3%;
       width:100%;
       box-sizing: border-box;
@@ -292,7 +301,7 @@ export default {
     // ----------------------------↓
 
     /deep/.van-cell {
-      background-color: #f0f0f0;
+      background-color: #fff;
       font-size: 14px;
     }
   }
@@ -327,7 +336,7 @@ export default {
       overflow: hidden;
       .census{
         padding: 10px 10px;
-        background: #f0f0f0;
+        background: #fff;
         .census-content{
           display: flex;
           flex-direction: row;
@@ -351,7 +360,7 @@ export default {
         flex-direction: row;
         align-items: center;
         padding: 0 10px;
-        background: #f0f0f0;
+        background: #fff;
         border-top: 2px solid #b5b5b5;
         .sort{
           padding:0 12.5px 0 12.5px;
@@ -360,7 +369,7 @@ export default {
           padding: 10px 0;
           display: flex;
           flex-direction: column;
-          background: #f0f0f0;
+          background: #fff;
 
         }
       }
@@ -373,14 +382,14 @@ export default {
           display: flex;
           flex-direction: column;
           align-items: center;
-          background: #f0f0f0;
+          background: #fff;
           margin-bottom:15px;
           .li-content{
             width:94%;
             display: flex;
             flex-direction: row;
             justify-content: space-between;
-            background: #f0f0f0;
+            background: #fff;
             padding: 10px 3%;
             border-top: 2px solid #b5b5b5;
 

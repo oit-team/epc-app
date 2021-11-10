@@ -6,6 +6,7 @@ export default {
   props: {
     title: String,
     titleClass: [String],
+    contentClass: [String],
   },
 
   methods: {
@@ -23,7 +24,7 @@ export default {
     },
     genPanelContent() {
       return this.$createElement('div', {
-        class: 'e-panel-content',
+        class: ['e-panel-content', this.contentClass],
       }, this.$slots.default)
     },
   },

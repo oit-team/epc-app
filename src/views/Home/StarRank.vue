@@ -14,7 +14,7 @@
       </div>
     </div>
 
-    <e-tabs v-model="userIndex" class="star-people text-left" hide-slider>
+    <e-tabs v-model="userIndex" class="star-people text-left bg-gray" hide-slider>
       <e-tab v-for="item of userRankList" :key="item.userId">
         <template #title>
           <div class="star-people-card">
@@ -49,11 +49,11 @@
         key="USE_TIME"
         :option="useTimeChartOption"
       ></e-charts>
-      <e-empty v-if="chartEmpty"></e-empty>
+      <e-empty v-if="chartEmpty" class="bg-gray"></e-empty>
       <e-loading class="bg-gray" :show="chartLoading"></e-loading>
     </div>
 
-    <e-empty v-if="pageEmpty"></e-empty>
+    <e-empty v-if="pageEmpty" class="bg-gray"></e-empty>
     <e-loading class="bg-gray" :show="pageLoading"></e-loading>
     <e-picker
       ref="picker"
@@ -182,6 +182,9 @@ export default {
           text: `${this.queryDateField}(TOP10)`,
           left: 'center',
           top: '5%',
+        },
+        label: {
+          formatter: '{c}时',
         },
         tooltip: {
           trigger: 'item',
@@ -326,7 +329,7 @@ export default {
       this.$refs.picker.close()
 
       return api.getUserRanking({
-        orgId: '266',
+        orgId: this.$store.getters.userData.orgId,
         flag: dateType,
         belong: this.formatQuery(this.selectedDate, true),
       }).then(res => {
@@ -345,7 +348,7 @@ export default {
       if (!this.selectedUser) return
 
       return api.getUserSotfRanking({
-        orgId: '3',
+        orgId: this.$store.getters.userData.orgId,
         userId: this.selectedUser.userId,
         flag: this.dateType,
         belong: this.queryDateField,
@@ -358,7 +361,7 @@ export default {
       if (!this.selectedUser) return
 
       return api.getSotfUeingList({
-        orgId: '3',
+        orgId: this.$store.getters.userData.orgId,
         userId: this.selectedUser.userId,
         flag: this.dateType,
         belong: this.queryDateField,

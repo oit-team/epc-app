@@ -11,7 +11,10 @@ export default {
 
   props: {
     promise: [Promise],
-    loading: Boolean,
+    loading: {
+      type: Boolean,
+      default: true,
+    },
     always: Boolean,
     root: Boolean,
   },
@@ -49,10 +52,14 @@ export default {
       })
     },
     genPendingSlot() {
-        if (this.loading && this.$scopedSlots.combined === undefined)
-          return this.$createElement(ELoading, { props: { show: true } })
-        else
-          return this.$scopedSlots.pending?.()
+      if (
+        this.loading
+        && this.$scopedSlots.combined === undefined
+        && this.$scopedSlots.pending === undefined
+      )
+        return this.$createElement(ELoading, { props: { show: true } })
+      else
+        return this.$scopedSlots.pending?.()
     },
     genDefaultSlot() {
       return this.$scopedSlots.default?.()

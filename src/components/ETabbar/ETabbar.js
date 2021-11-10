@@ -7,7 +7,7 @@ export default {
   name: 'ETabbar',
 
   data: () => ({
-    tabIndex: 1,
+    tabIndex: 0,
     show: false,
   }),
 

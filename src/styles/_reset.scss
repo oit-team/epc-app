@@ -1,5 +1,10 @@
 html {
   font-size: 16px;
+  scrollbar-width: none;
+
+  ::-webkit-scrollbar {
+    width: 0
+  }
 }
 
 [class*=rounded-] {
@@ -8,4 +13,8 @@ html {
 
 img {
   -webkit-touch-callout: none;
+}
+
+span {
+  vertical-align: inherit;
 }

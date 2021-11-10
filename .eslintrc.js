@@ -16,12 +16,17 @@ module.exports = {
     parser: '@babel/eslint-parser',
   },
 
+  globals: {
+    logger: 'readonly',
+  },
+
   rules: {
     // 使用console时警告
     'no-console': ['warn', { allow: ['debug', 'error', 'warn'] }],
-    'no-debugger': production ? 'error' : 'off',
-    // 强制使用===
-    eqeqeq: ['error', 'always'],
+    'no-debugger': production ? 'error' : 'warn',
+    'no-alert': production ? 'error' : 'warn',
+    // 推荐使用"==="进行比较
+    eqeqeq: ['warn', 'always'],
     // 函数后面紧贴括号
     'space-before-function-paren': ['error', 'never'],
     // 关闭默认缩进验证

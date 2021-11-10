@@ -39,31 +39,6 @@ export default {
     updatePhone() {
       this.$router.to('UpdateUserInfo')
     },
-    // 更新头像
-    updateInfos() {
-      const data = {
-        headPortrait: this.imgStr,
-        sex: this.$store.getters.userData.sex === '男' ? '0' : this.$store.getters.userData.sex === '女' ? '1' : '',
-        userId: this.$store.getters.userData.userId,
-        entryTime: this.$store.getters.userData.entryTime,
-        employeeName: this.$store.getters.userData.userName,
-      }
-      const jsonParam = this.GLOBAL.g_paramJson(data)
-      this.$axios.post(this.GLOBAL.systemServer + '/user/upUserInfo', jsonParam)
-        .then((res) => {
-          if (res.data.head.status === 0) {
-            if (res.data.body.headPortrait) {
-              this.$store.commit('SAVE_USER_DATA', {
-                ...this.$store.getters.userData,
-                headPortrait: res.data.body.headPortrait,
-              })
-            }
-            this.$toast('修改成功')
-          } else {
-            this.$toast('修改失败！')
-          }
-        })
-    },
     // 处理头像上传
     handleInputChange(e) {
       const file = e.target.files[0]
@@ -92,6 +67,31 @@ export default {
           this.updateInfos()
         }
       }
+    },
+    // 更新头像
+    updateInfos() {
+      const data = {
+        headPortrait: this.imgStr,
+        sex: this.$store.getters.userData.sex === '男' ? '0' : this.$store.getters.userData.sex === '女' ? '1' : '',
+        userId: this.$store.getters.userData.userId,
+        entryTime: this.$store.getters.userData.entryTime,
+        employeeName: this.$store.getters.userData.userName,
+      }
+      const jsonParam = this.GLOBAL.g_paramJson(data)
+      this.$axios.post(this.GLOBAL.systemServer + '/user/upUserInfo', jsonParam)
+        .then((res) => {
+          if (res.data.head.status === 0) {
+            if (res.data.body.headPortrait) {
+              this.$store.commit('SAVE_USER_DATA', {
+                ...this.$store.getters.userData,
+                headPortrait: res.data.body.headPortrait,
+              })
+            }
+            this.$toast('修改成功')
+          } else {
+            this.$toast('修改失败！')
+          }
+        })
     },
   },
 }

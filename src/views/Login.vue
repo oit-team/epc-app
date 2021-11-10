@@ -77,15 +77,14 @@ export default {
         employeeId: this.form.username,
         passWord: encryptedPwd,
       }).then(res => {
-        this.$toast.success('登录成功')
-
         this.$store.commit('SAVE_USER_DATA', {
           ...res.body.result,
           accessToken: res.body.accessToken,
         })
         iframe.loginSuccess()
 
-        this.$router.to('Home')
+        this.$router.to('/portrait')
+        this.$toast.success('登录成功')
       }).catch(err => {
         this.$toast.fail(err.head.msg)
       })

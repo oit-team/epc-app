@@ -1,18 +1,18 @@
 <template>
   <div>
     <div class="filter-bar px-2 items-stretch py-1 text-secondary">
-      <div class="bg-gray flex items-center flex-1 px-2" @click="showFilter = true">
+      <div class="bg-gray flex items-center flex-1 px-2 rounded" @click="showFilter = true">
         <e-icon class="pr-2 align-middle">sitemap</e-icon>
         <span>组织筛选</span>
       </div>
-      <div class="flex items-center bg-gray ml-1 px-2 w-3/5" @click="showCalendar = true">
-        <e-icon class="pr-2">filter-list</e-icon>
+      <div class="flex items-center bg-gray ml-1 px-2 w-3/5 rounded" @click="showCalendar = true">
+        <e-icon class="pr-2">calendar-days</e-icon>
         <span>{{ startTime }} - {{ endTime }}</span>
       </div>
     </div>
 
     <div class="p-2 flex-1">
-      <e-panel class="h-full overflow-hidden">
+      <e-panel class="h-full overflow-hidden" content-class="overflow-auto">
         <!--        <e-pull-refresh>-->
         <!--          <e-infinite-loading>-->
         <div class="divide-y divide-gray h-full">
@@ -76,7 +76,7 @@ const RankItem = {
           <div class="text-primary w-1/6">{this.index}</div>
           <div class="flex-1 text-sm">{this.item.departName}</div>
           <div class="flex-1 text-sm">共{this.item.userCountNum}人</div>
-          <div class="w-1/6 text-xl text-warn">{qualificationNum}</div>
+          <div class={['w-1/6 text-xl', qualificationNum > 60 ? 'text-primary' : 'text-warn']}>{qualificationNum}</div>
         </div>
     )
   },

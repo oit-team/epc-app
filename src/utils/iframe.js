@@ -35,13 +35,20 @@ const iframe = {
     })
   },
   /**
-   * 原生页面传过来的msgId
-   * @param {string} msgId
+   * 获取团队或员工详情信息
+   * @param {string} msgId 查询结果ID
+   * @returns {Promise<object>} 查询结果
    */
   getQueryDetail(msgId) {
     iframe.postMessage({
       methodName: 'getQueryDetail',
       msgId,
+    })
+
+    return new Promise((resolve) => {
+      window.siriQueryDetail = (data) => {
+        resolve(JSON.parse(data))
+      }
     })
   },
 }

@@ -9,7 +9,7 @@ import { isNil } from 'lodash'
 const axiosConfig = {
   // 请求超时时间
   timeout: 60000,
-  baseURL: '/',
+  baseURL: process.env.NODE_ENV === 'production' ? '/epc' : '/',
 }
 
 // 创建axios实例
