@@ -1,6 +1,6 @@
 <template>
   <e-promise :promise="loadingPromise" loading root>
-    <div class="filter-bar px-2 text-secondary">
+    <div class="filter-bar px-2 text-secondary text-sm">
       <van-search
         v-model="searchText"
         class="py-1 px-0 flex-1 text-secondary rounded"
@@ -9,7 +9,7 @@
       ></van-search>
       <div class="flex items-center bg-gray self-stretch my-1 ml-1 px-2 w-3/5 rounded" @click="showCalendar = true">
         <e-icon class="pr-2">calendar-days</e-icon>
-        <span>{{ startTime }} - {{ endTime }}</span>
+        <span class="whitespace-nowrap">{{ startTime }} - {{ endTime }}</span>
       </div>
     </div>
 
@@ -19,7 +19,7 @@
       </e-panel>
       <e-panel class="flex-1 mt-2 relative overflow-hidden" content-class="overflow-auto">
         <!--        <e-pull-refresh class="" @refresh="refresh">-->
-        <e-infinite-loading pager @load="loadData">
+        <e-infinite-loading ref="list" pager @load="loadData">
           <div class="divide-y divide-gray">
             <rank-item
               v-for="item of portraitList"
@@ -43,6 +43,7 @@
       type="range"
       :min-date="minDate"
       :max-date="maxDate"
+      allow-same-day
       @confirm="confirmCalendar"
     />
   </e-promise>
@@ -75,10 +76,15 @@ const RankItem = {
           <div class="text-primary w-1/6">{this.index}</div>
           <e-img class="rounded-lg mr-2" src={userInfo.telephone} size="50"></e-img>
           <div class="flex-1 text-sm text-left">
-            <div>{userInfo.userName} - {userInfo.deptName}</div>
-            <div>{userInfo.position}</div>
+            <div>
+              <span class="font-bold">{userInfo.userName}</span>
+              <span class="text-secondary"> - {userInfo.deptName}</span>
+            </div>
+            <div>
+              <span class="text-secondary">{userInfo.position}</span>
+            </div>
           </div>
-          <div class={['w-1/6 text-xl', qualificationNum > 60 ? 'text-primary' : 'text-warn']}>{qualificationNum}</div>
+          <div class={['w-1/6 text-xl', qualificationNum >= 60 ? 'text-primary' : 'text-warn']}>{qualificationNum}</div>
         </div>
     )
   },
@@ -127,8 +133,9 @@ export default {
         endTime: this.endTime,
         userName: this.searchText,
         pageNum: page,
-        pageSize: 20,
+        pageSize: 100,
       }).then(res => {
+        if (page === 1) this.$refs.list.resetState()
         this.portraitList = page === 1 ? res.body.portraitList : this.portraitList.concat(res.body.portraitList)
         this.selfData = res.body.userRanking[0]
         this.dataEmpty = false

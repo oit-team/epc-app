@@ -14,6 +14,7 @@ Vue.use(Vuex)
  * @param {string} key
  * @param {object} state
  * @param {any} data
+ * @param {boolean} defer 是否推迟到队列最后保存
  */
 function saveToStoreAndStorage(key, state, data, defer = true) {
   state[key] = data
@@ -21,7 +22,7 @@ function saveToStoreAndStorage(key, state, data, defer = true) {
 }
 
 /**
- * 从vuex或缓存中获取数据
+ * 从vuex中获取数据，如果无数据，会尝试从缓存中取
  * @param {object} state
  * @param {string} key
  * @returns {*}
@@ -76,7 +77,7 @@ export default new Vuex.Store({
 
         if (userStatic === STATIC_TYPES.SUCCESS) {
           iframe.loginSuccess()
-          router.replace({ name: 'Home' })
+          router.replace('/portrait')
         } else if (userStatic === STATIC_TYPES.NOT_EXIST) {
           Toast.fail('用户不存在')
           router.replace({ name: 'Login' })

@@ -107,7 +107,7 @@ export default {
     // 未读列表数据
     resuList: [],
   }),
-  created() {
+  onLoad() {
     this.styleListFlag = true
     if (this.$route.query.bhdId) {
       this.bhdId = Number(this.$route.query.bhdId)
@@ -151,7 +151,7 @@ export default {
     back() {
       localStorage.removeItem('bhdId')
       localStorage.removeItem('isProcessed')
-      this.$router.to('Home')
+      this.$router.to('Work')
     },
     //  跳转至工作日志
     detailShow(list) {

@@ -31,7 +31,7 @@ yarn lint-fix
 ## 项目依赖
 - [vant](https://youzan.github.io/vant) - UI库
 - [tailwindcss](https://www.tailwindcss.cn) - CSS原子类框架
-- [lodash](https://lodash.com/) - JavaScript工具库
+- [lodash](https://lodash.com) - JavaScript工具库
 
 ## TODO
 

@@ -14,31 +14,34 @@
       </div>
     </div>
 
-    <e-tabs v-model="userIndex" class="star-people text-left bg-gray" hide-slider>
-      <e-tab v-for="item of userRankList" :key="item.userId">
-        <template #title>
-          <div class="star-people-card">
-            <e-img
-              class="mr-4"
-              :src="item.headPortrait"
-              round
-              size="50"
-            ></e-img>
-            <div>
-              <div>{{ item.userName }}</div>
-              <div>{{ item.groupName }}</div>
-              <div>{{ item.departName }}</div>
+    <div class="bg-gray">
+      <div class="text-center text-sm mt-2">{{ queryDateField }}</div>
+      <e-tabs v-model="userIndex" class="star-people text-left bg-gray" hide-slider>
+        <e-tab v-for="item of userRankList" :key="item.userId">
+          <template #title>
+            <div class="star-people-card">
+              <e-img
+                class="mr-4"
+                :src="item.headPortrait"
+                round
+                size="50"
+              ></e-img>
+              <div class="flex flex-col justify-around">
+                <div class="text-xl font-bold">{{ item.userName }}</div>
+                <div class="text-xs text-secondary">{{ item.departName }}</div>
+                <div class="text-xs text-secondary">{{ item.groupName }}</div>
+              </div>
             </div>
-          </div>
-        </template>
-      </e-tab>
-    </e-tabs>
+          </template>
+        </e-tab>
+      </e-tabs>
+    </div>
 
     <e-tabs v-model="chartType" class="chart-tabs">
       <e-tab title="软件使用比"></e-tab>
       <e-tab title="软件使用分布"></e-tab>
     </e-tabs>
-    <div class="relative flex-1 overflow-hidden">
+    <div class="relative flex-1 overflow-hidden bg-gray">
       <e-charts
         v-if="chartType === USE_RATIO"
         key="USE_RATIO"
@@ -101,6 +104,15 @@ export default {
   },
 
   data: () => ({
+    // 用户排行数据
+    userRankList: [],
+    // 图表数据
+    useRatio: {},
+    // 筛选条件数据缓存
+    dateFilters: {},
+    // 软件使用时长数据
+    useTimeList: [],
+
     // 时间筛选类型选择
     dateType: '1',
     // 图表类型选择
@@ -117,26 +129,12 @@ export default {
     chartLoading: true,
     // 图表无数据
     chartEmpty: false,
-
-    // 用户排行数据
-    userRankList: [],
-    // 图表数据
-    useRatio: {},
-    // 筛选条件数据缓存
-    dateFilters: {},
-    // 软件使用时长数据
-    useTimeList: [],
   }),
 
   computed: {
     // 软件使用比图表配置
     useRatioChartOption() {
       return {
-        title: {
-          text: this.queryDateField,
-          left: 'center',
-          top: '5%',
-        },
         tooltip: {
           trigger: 'item',
           confine: true,
@@ -146,6 +144,11 @@ export default {
           {
             type: 'pie',
             radius: '50%',
+            label: {
+              formatter: '{b}\n{d}%',
+              position: 'inner',
+              color: 'white',
+            },
             data: [
               {
                 value: Number(this.useRatio.valid),
@@ -174,12 +177,13 @@ export default {
       return {
         grid: {
           top: '15%',
+          left: '5%',
           bottom: 30,
-          left: '40%',
-          right: 50,
+          right: '15%',
+          containLabel: true,
         },
         title: {
-          text: `${this.queryDateField}(TOP10)`,
+          text: 'TOP10',
           left: 'center',
           top: '5%',
         },
@@ -204,7 +208,6 @@ export default {
         series: [
           {
             realtimeSort: true,
-            name: 'X',
             type: 'bar',
             data: this.useTimeData,
             label: {
@@ -261,6 +264,7 @@ export default {
 
   watch: {
     dateType() {
+      this.userIndex = 0
       this.selectedIndex = 0
       this.loadData()
     },
@@ -390,55 +394,68 @@ export default {
 }
 </script>
 
-<style lang='scss' scoped>
-  .date-type::v-deep {
-    .van-tabs__wrap {
-      padding-right: 130px;
-    }
-    .van-tab {
-      margin: 0 10px;
+<style lang="scss" scoped>
+.date-type::v-deep {
+  .van-tabs__nav {
+    padding-bottom: 10px;
+  }
+
+  .van-tabs__nav > :not(:last-child) ~ :not(:last-child){
+    &:before {
+      content: '';
+      display: block;
+      position: absolute;
+      left: 0;
+      height: 1em;
+      border-left: 2px solid #f0f0f0;
     }
   }
 
-  .star-people::v-deep {
-    .van-tabs__wrap {
-      height: initial;
+  .van-tab--active {
+    font-size: 1rem;
+  }
+}
+
+.star-people::v-deep {
+  .van-tabs__wrap {
+    height: initial;
+  }
+
+  .van-tabs__nav {
+    height: 100px;
+    padding: 10px 5px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    background: transparent;
+    box-sizing: border-box;
+  }
+
+  .van-tab {
+    flex: 1 0 auto;
+
+    .van-tab__text {
+      overflow: initial;
+      flex: inherit;
     }
 
-    .van-tabs__nav {
-      height: 100px;
-      padding: 10px 5px;
-      overflow-x: auto;
-      overflow-y: hidden;
-      -webkit-overflow-scrolling: touch;
-      background: transparent;
-      box-sizing: border-box;
-    }
-
-    .van-tab {
-      flex: 1 0 auto;
-      .van-tab__text {
-        overflow: initial;
-        flex: inherit;
-      }
-
-      .star-people-card {
-        @apply flex items-center justify-center p-2 bg-white rounded-lg;
-        transition: 0.3s;
-      }
-    }
-
-    .van-tab--active {
-      .star-people-card {
-        box-shadow: 0 0 10px -1px var(--primary);
-      }
+    .star-people-card {
+      @apply flex items-center justify-center p-2 bg-white rounded-lg;
+      transition: 0.3s;
     }
   }
 
-  .chart-tabs::v-deep {
-    .van-tab {
-      flex: none;
-      padding: 0 10px;
+  .van-tab--active {
+    .star-people-card {
+      background: #e8f2e7;
     }
   }
+}
+
+.chart-tabs::v-deep {
+  .van-tab {
+    flex: none;
+    padding: 0 10px;
+  }
+}
 </style>

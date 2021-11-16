@@ -6,7 +6,7 @@
         <e-tab title="基本信息"></e-tab>
         <e-tab title="风险管理"></e-tab>
       </e-tabs>
-      <e-icon v-if="!$route.meta.page" @click="showCalendar = true">filter-list</e-icon>
+      <e-icon v-if="!$route.meta.page" class="text-secondary" @click="showCalendar = true">calendar-days</e-icon>
     </div>
 
     <div class="flex flex-col flex-1 relative overflow-auto p-2">
@@ -17,7 +17,7 @@
           </template>
           <div class="flex">
             <div class="border-r border-gray w-2/5 text-center py-2 px-1">
-              <div class="score" :class="portraitData.qualificationNum > 60 ? 'text-primary' : 'text-warn'">
+              <div class="score" :class="portraitData.qualificationNum >= 60 ? 'text-primary' : 'text-warn'">
                 <span>{{ scoreSplit[0] }}</span>
                 <span v-if="scoreSplit[1]" class="decimal">.{{ scoreSplit[1] }}</span>
               </div>
@@ -50,7 +50,7 @@
             </div>
             <div v-if="$route.meta.personal" class="flex items-center">
               <span>{{ portraitData.scoreGap }}</span>
-              <e-icon class="text-primary ml-1" size="18">
+              <e-icon v-if="portraitData.ranking !== 0" class="text-primary ml-1" size="18">
                 {{ portraitData.ranking === 1 ? 'crown' : 'to-top' }}
               </e-icon>
             </div>
@@ -99,6 +99,7 @@
       type="range"
       :min-date="minDate"
       :max-date="maxDate"
+      allow-same-day
       @confirm="confirmCalendar"
     />
   </e-promise>
@@ -156,6 +157,7 @@ export default {
         eawPercent,
         forceExecutive,
         validTimePercent,
+        workEnthusiasm,
       } = this.portraitData
 
       return {
@@ -164,23 +166,15 @@ export default {
         },
         radar: {
           indicator: [
-            {
-              name: '工作态度',
-              max: 100,
-            },
-            {
-              name: '工作效率',
-              max: 100,
-            },
-            {
-              name: '执行力',
-              max: 100,
-            },
-            {
-              name: '职位贡献',
-              max: 100,
-            },
-          ],
+            '工作态度',
+            '工作效率',
+            '工作改进',
+            this.switchText('职位', '部门') + '贡献',
+            '工作热情',
+          ].map(name => ({
+            name,
+            max: 100,
+          })),
           radius: [0, 100],
         },
         series: [
@@ -206,6 +200,7 @@ export default {
                   eawPercent,
                   forceExecutive,
                   validTimePercent,
+                  workEnthusiasm,
                 ],
               },
             ],
@@ -267,6 +262,7 @@ export default {
           forceExecutive: deptData.forceExecutive,
           validTimePercent: deptData.validTimePercent,
           departGrade: deptData.departGrade,
+          workEnthusiasm: deptData.workEnthusiasm,
         }
       } else if (this.$route.meta.personal) {
         const userInfo = this.personalData.userInfo
@@ -283,6 +279,7 @@ export default {
           forceExecutive: portrait.forceExecutive,
           validTimePercent: portrait.validTimePercent,
           scoreGap: portrait.scoreGap,
+          workEnthusiasm: portrait.workEnthusiasm,
         }
       }
       return {}
@@ -411,9 +408,9 @@ export default {
       this.showCalendar = false
       this.loadData()
     },
-    switchText(text1, text2) {
-      if (this.$route.meta.personal) return text1
-      else if (this.$route.meta.dept) return text2
+    switchText(personalText, deptText) {
+      if (this.$route.meta.personal) return personalText
+      else if (this.$route.meta.dept) return deptText
     },
   },
 }

@@ -16,7 +16,7 @@
           <e-icon name="arrow"></e-icon>
         </li>
         <li>
-          <span class="item-tit">版&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;本</span>
+          <span class="item-tit">版本</span>
           <div>1.0.0</div>
         </li>
         <li class="quit" @click="exit">
@@ -97,8 +97,5 @@ export default {
 
 .select-none {
     user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
 }
 </style>

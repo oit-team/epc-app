@@ -15,6 +15,8 @@ module.exports = {
   'picker-confirm-action-color': 'var(--primary)',
 
   'divider-margin': '0',
+  'divider-border-color': '#e1e1e1',
+  'divider-font-size': '0.75rem',
 
   'grid-item-text-font-size': '0.875rem',
 

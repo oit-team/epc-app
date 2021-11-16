@@ -5,11 +5,13 @@ import { kebabCase } from 'lodash'
 Vue.use(VueRouter)
 
 const Login = () => import('@/views/Login')
-const Home = () => import('@/views/Home')
-const Warn = () => import('@/views/Home/Warn')
-const WarnUserList = () => import('@/views/Home/WarnUserList')
-const WarnListDetail = () => import('@/views/Home/WarnListDetail')
-const StarRank = () => import('@/views/Home/StarRank')
+const Work = () => import('@/views/Work')
+const Warn = () => import('@/views/Work/Warn')
+const WarnUserList = () => import('@/views/Work/WarnUserList')
+const WarnListDetail = () => import('@/views/Work/WarnListDetail')
+const StarRank = () => import('@/views/Work/StarRank')
+const Messages = () => import('@/views/Work/Messages')
+const MessageContent = () => import('@/views/Work/MessageContent')
 
 const Account = () => import('@/views/Account')
 const Setup = () => import('@/views/Account/Setup')
@@ -30,11 +32,11 @@ const DepartmentRank = () => import('@/views/Portrait/DepartmentRank')
 const routes = [
   {
     path: '/',
-    redirect: '/home',
+    redirect: '/portrait',
   },
   {
-    name: 'Home',
-    component: Home,
+    name: 'Work',
+    component: Work,
   },
   {
     name: 'Login',
@@ -141,6 +143,19 @@ const routes = [
         component: DepartmentRank,
       },
     ],
+  },
+  {
+    name: 'Messages',
+    component: Messages,
+  },
+  {
+    name: 'MessageContent',
+    component: MessageContent,
+  },
+  // 未匹配到的路由都跳转首页
+  {
+    path: '*',
+    redirect: '/',
   },
 ]
 

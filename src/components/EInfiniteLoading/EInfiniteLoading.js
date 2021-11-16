@@ -44,6 +44,7 @@ export default {
     genErrorSlot() {
       if (this.state === ERROR)
         return this.$createElement('div', {
+          slot: 'error',
           class: 'van-list__error-text',
           on: {
             click: () => {
@@ -52,11 +53,16 @@ export default {
           },
         }, '请求失败，点击重新加载')
     },
+    genFinishedSlot() {
+      return this.$createElement('div', {
+        slot: 'finished',
+      }, [
+        this.$createElement('e-divider', { class: 'py-2' }, '我是有底线的'),
+      ])
+    },
     resetState() {
       if (this.pager !== false) {
-        this.index = typeof this.pager === 'number' || !isNaN(parseInt(this.pager))
-                     ? parseInt(this.pager)
-                     : this.index
+        this.index = 1
       }
       this.state = NOT_LOADED
     },
@@ -77,6 +83,7 @@ export default {
     }, [
       this.$slots.default,
       this.genErrorSlot(),
+      this.genFinishedSlot(),
     ])
   },
 }

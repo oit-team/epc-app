@@ -3,6 +3,8 @@ const tailwindcss = require('tailwindcss')
 // https://github.com/evrone/postcss-px-to-viewport/blob/HEAD/README_CN.md
 const pxtoviewport = require('postcss-px-to-viewport')
 const path = require('path')
+const autoprefixer = require('autoprefixer')
+
 const modifyVars = require('./vant.config')
 const production = process.env.NODE_ENV === 'production'
 
@@ -12,18 +14,42 @@ function resolve(dir) {
 
 module.exports = {
   publicPath: './',
+  outputDir: 'epc-app',
   devServer: {
-    port: 8000,
-    // 后端API地址
-    // proxy: 'http://192.168.9.71:7071',
-    // proxy: 'https://app.eepcp.com:9444/epc',
-    proxy: 'http://ox98jgp.nat.ipyingshe.com:80/api',
+    port: 1100,
+    proxy: {
+      // 本地
+      '/dev': {
+        target: 'http://192.168.9.71:7071',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/dev': '',
+        },
+      },
+      // 生产
+      '/epc': {
+        target: 'https://app.eepcp.com:9444/epc',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/epc': '',
+        },
+      },
+      // 内网穿透
+      '/net': {
+        target: 'http://ox98jgp.nat.ipyingshe.com:80/api',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/net': '',
+        },
+      },
+    },
   },
   productionSourceMap: !production,
   css: {
     loaderOptions: {
       postcss: {
         plugins: [
+          autoprefixer,
           tailwindcss,
           pxtoviewport({
             viewportWidth: 375, // UI设计稿的宽度
@@ -57,7 +83,7 @@ module.exports = {
       .loader('svgo-loader')
       .end()
 
-    /* 添加分析工具 */
+    // 添加分析工具
     if (production) {
       config
         .plugin('webpack-bundle-analyzer')

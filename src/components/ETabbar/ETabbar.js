@@ -9,12 +9,40 @@ export default {
   data: () => ({
     tabIndex: 0,
     show: false,
+    options: [],
   }),
 
   watch: {
     $route(to) {
       this.matchRouter(to.path)
     },
+  },
+
+  created() {
+    this.options = [
+      {
+        title: '画像',
+        icon: 'portrait',
+        to: '/portrait',
+        routes: ['/portrait', '/portrait/data', '/portrait/personal-rank', '/portrait/department-rank'],
+      },
+      {
+        title: '工作',
+        icon: 'work',
+        to: '/work',
+        dot: false,
+      },
+      {
+        title: '易助手',
+        icon: 'siri',
+        click: iframe.switchToSiri,
+      },
+      {
+        title: '我的',
+        icon: 'account',
+        to: '/account',
+      },
+    ]
   },
 
   mounted() {
@@ -37,33 +65,11 @@ export default {
   },
 
   render(h) {
-    this.options = [
-      {
-        title: '画像',
-        icon: 'portrait',
-        to: '/portrait',
-        routes: ['/portrait', '/portrait/data', '/portrait/personal-rank', '/portrait/department-rank'],
-      },
-      {
-        title: '工作',
-        icon: 'work',
-        to: '/home',
-      },
-      {
-        title: '易助手',
-        icon: 'siri',
-        click: iframe.switchToSiri,
-      },
-      {
-        title: '我的',
-        icon: 'account',
-        to: '/account',
-      },
-    ]
-
     const tabbarItems = this.options.map((item, index) => {
       const tabData = {
-        props: {},
+        props: {
+          dot: item.dot,
+        },
         on: {},
         scopedSlots: {
           icon: ({ active }) => h('e-img', {

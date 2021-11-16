@@ -1,6 +1,12 @@
 <template>
   <div>
-    <e-header class="bg-gray" title="工作" :back="false" :border="false"></e-header>
+    <e-header class="bg-gray" title="工作" :back="false" :border="false">
+      <template #right>
+        <e-badge class="message-badge" :dot="unreadMsg > 0">
+          <e-icon v-to="'Messages'" name="bell-regular" size="18" />
+        </e-badge>
+      </template>
+    </e-header>
     <div class="px-2">
       <e-panel
         v-for="(panel, index) of panelData"
@@ -31,10 +37,10 @@
 
 <script>
 import { EGrid, EGridItem, EPanel, EBadge } from '@/components'
-import * as api from '@/api/home'
+import * as api from '@/api/work'
 
 export default {
-  name: 'Home',
+  name: 'Work',
 
   components: {
     EGrid,
@@ -45,6 +51,7 @@ export default {
 
   data: () => ({
     panelData: [],
+    unreadMsg: 0,
   }),
 
   created() {
@@ -55,14 +62,14 @@ export default {
           {
             bhdId: '1',
             text: '工作效率',
-            icon: 'assets/images/home/6390dbec1d8114243b4d331903800434.png',
+            icon: 'assets/images/work/6390dbec1d8114243b4d331903800434.png',
             to: '/warn?bhdId=1',
             badge: 0,
           },
           {
             bhdId: '2',
             text: '考勤',
-            icon: 'assets/images/home/c73426997a1143452ec229fd459ce115.png',
+            icon: 'assets/images/work/c73426997a1143452ec229fd459ce115.png',
             to: '/warn?bhdId=2',
             badge: 0,
           },
@@ -73,7 +80,7 @@ export default {
         items: [
           {
             text: '明星榜',
-            icon: 'assets/images/home/04a2abf3cb5a443cf299ae007ff1babf.png',
+            icon: 'assets/images/work/04a2abf3cb5a443cf299ae007ff1babf.png',
             to: 'StarRank',
           },
         ],
@@ -81,25 +88,42 @@ export default {
     ]
   },
 
-  activated() {
+  onLoad() {
     this.getBhdCount()
+    this.getUnreadMsgCount()
   },
 
   methods: {
     getBhdCount() {
+      const tabbar = this.$parent.$refs.tabbar
+
       api.getBhdCount().then(res => {
         res.body.resultList?.forEach(item => {
           this.panelData[0].items.forEach(panelItem => {
             if (panelItem.bhdId === item.bhdItem) {
               panelItem.badge = item.totalCount
+              if (item.totalCount > 0) {
+                tabbar.options[1].dot = true
+              }
             }
           })
         })
+      })
+    },
+    getUnreadMsgCount() {
+      api.getUnreadMsgCount().then(res => {
+        this.unreadMsg = res.body.totalCount
       })
     },
   },
 }
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
+.message-badge {
+  ::v-deep .van-badge {
+    top: 5px;
+    right: 3px;
+  }
+}
 </style>

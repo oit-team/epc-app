@@ -4,12 +4,13 @@ import API_STATUS from '@/api/API_STATUS'
 import { Toast } from 'vant'
 import router from '@/router'
 import { isNil } from 'lodash'
+import apiConfig from './api.config'
 
 // axios配置
 const axiosConfig = {
   // 请求超时时间
   timeout: 60000,
-  baseURL: process.env.NODE_ENV === 'production' ? '/epc' : '/',
+  baseURL: process.env.NODE_ENV === 'production' ? './epc' : apiConfig.baseURL,
 }
 
 // 创建axios实例

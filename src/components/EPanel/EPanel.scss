@@ -6,6 +6,6 @@
   }
 
   &-content {
-    @apply flex-1;
+    @apply flex-1 rounded-b-xl overflow-hidden;
   }
 }

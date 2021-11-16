@@ -1,9 +1,13 @@
 html {
+  font-family: "PingFang SC", Avenir, Helvetica, Arial, sans-serif;
   font-size: 16px;
+  color: rgba(0, 0, 0, .87);
   scrollbar-width: none;
+  user-select: none;
 
   ::-webkit-scrollbar {
-    width: 0
+    display: none;
+    width: 0;
   }
 }
 

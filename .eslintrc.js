@@ -16,10 +16,6 @@ module.exports = {
     parser: '@babel/eslint-parser',
   },
 
-  globals: {
-    logger: 'readonly',
-  },
-
   rules: {
     // 使用console时警告
     'no-console': ['warn', { allow: ['debug', 'error', 'warn'] }],

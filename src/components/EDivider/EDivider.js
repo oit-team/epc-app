@@ -5,7 +5,7 @@ export default {
 
   functional: true,
 
-  render(h) {
-    return h(Divider)
+  render(h, ctx) {
+    return h(Divider, ctx.data, ctx.children)
   },
 }

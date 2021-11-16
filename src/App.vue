@@ -29,7 +29,7 @@ export default {
 
   computed: {
     alwaysAlive() {
-      return ['/portrait/data', '/portrait/personal-rank', '/portrait/department-rank', '/home', '/account']
+      return ['/portrait/data', '/portrait/personal-rank', '/portrait/department-rank', '/work', '/account']
         .includes(this.$route.fullPath)
     },
   },
@@ -48,13 +48,9 @@ export default {
     flex-direction: column;
     height: 100vh;
     width: 100vw;
-    font-family: Avenir, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    color: rgba(0, 0, 0, .87);
     overflow: hidden;
-    -webkit-user-select: none;
-    user-select: none;
   }
 
   .router-view {
