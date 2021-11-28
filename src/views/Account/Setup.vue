@@ -77,8 +77,11 @@ export default {
         padding: 0px 12px;
 
         .item-tit {
+            width: 4em;
+            text-align: justify;
             margin-right: auto;
             margin-left: 5px;
+            text-align-last: justify;
         }
 
         img {

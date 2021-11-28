@@ -5,7 +5,7 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 
-import './plugins/Vant'
+import './plugins'
 import './components'
 import './directives'
 import './mixin'

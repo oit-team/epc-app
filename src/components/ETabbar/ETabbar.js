@@ -8,7 +8,6 @@ export default {
 
   data: () => ({
     tabIndex: 0,
-    show: false,
     options: [],
   }),
 
@@ -52,15 +51,12 @@ export default {
   methods: {
     matchRouter(path) {
       path ??= this.$route.path
-      let matched = false
       for (const index in this.options) {
         if (this.options[index].to === path || this.options[index].routes?.includes(path)) {
           this.tabIndex = Number(index)
-          matched = true
           break
         }
       }
-      this.show = !matched
     },
   },
 
@@ -97,10 +93,8 @@ export default {
       },
     }, tabbarItems)
 
-    if (!this.show) {
-      return h('div', {
-        class: 'e-tabbar',
-      }, [tabbar])
-    }
+    return h('div', {
+      class: 'e-tabbar',
+    }, [tabbar])
   },
 }

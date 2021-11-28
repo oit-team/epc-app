@@ -49,6 +49,7 @@
       ></e-charts>
       <e-charts
         v-if="chartType === USE_TIME"
+        ref="useTime"
         key="USE_TIME"
         :option="useTimeChartOption"
       ></e-charts>
@@ -174,12 +175,13 @@ export default {
     },
     // 软件使用时长图表配置
     useTimeChartOption() {
+      this.$refs.useTime?.chart?.clear()
       return {
         grid: {
           top: '15%',
           left: '5%',
           bottom: 30,
-          right: '15%',
+          right: '20%',
           containLabel: true,
         },
         title: {
@@ -195,14 +197,13 @@ export default {
           confine: true,
         },
         xAxis: {
+          type: 'value',
           max: 'dataMax',
         },
         yAxis: {
           type: 'category',
           data: this.useTimeTitle,
           inverse: true,
-          animationDuration: 300,
-          animationDurationUpdate: 300,
           max: 9,
         },
         series: [
@@ -339,6 +340,10 @@ export default {
       }).then(res => {
         this.userRankList = res.body.resultList
         this.pageEmpty = false
+        // 如果用户不存在则重置下标
+        if (this.selectedUser === undefined) {
+          this.userIndex = 0
+        }
       }).catch(err => {
         if (err.head.status === API_STATUS.FAILED && err.body === null) {
           this.userRankList = []

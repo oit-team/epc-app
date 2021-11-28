@@ -76,8 +76,8 @@ export default {
     setOption() {
       this.$nextTick(() => {
         console.debug('[echarts] 配置改变 ==> ', this.option)
-        this.chart.setOption(this.option)
-        this.chart.resize()
+        this.chart.setOption(this.option, true)
+        // this.chart.resize()
       })
     },
     /**
@@ -113,7 +113,7 @@ export default {
     },
     /**
      * 根据option.series数组中的类型自动获取图表类型组件
-     * @returns 图表类型组件
+     * @returns {} 图表类型组件
      */
     async getChartTypes() {
       if (!echartsTypes.length)

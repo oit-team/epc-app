@@ -1,0 +1,2 @@
+import './Vant'
+import './VPromised'

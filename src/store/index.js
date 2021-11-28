@@ -4,7 +4,6 @@ import storage from '@/utils/storage'
 import { isNil, isEmpty } from 'lodash'
 import { selUserByID } from '@/api/user'
 import iframe from '@/utils/iframe'
-import router from '@/router'
 import { Toast } from 'vant'
 
 Vue.use(Vuex)
@@ -76,11 +75,11 @@ export default new Vuex.Store({
         const userStatic = res.body.static
 
         if (userStatic === STATIC_TYPES.SUCCESS) {
-          iframe.loginSuccess()
-          router.replace('/portrait')
+          iframe.loginSuccess(userData)
+          return res
         } else if (userStatic === STATIC_TYPES.NOT_EXIST) {
           Toast.fail('用户不存在')
-          router.replace({ name: 'Login' })
+          return Promise.reject(res)
         }
       })
     },

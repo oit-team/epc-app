@@ -8,9 +8,6 @@ export default {
   props: {
     show: Boolean,
     promise: [Promise],
-    vertical: {
-      default: true,
-    },
     delay: {
       type: [Number, Boolean],
       default: false,

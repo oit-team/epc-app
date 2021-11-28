@@ -1,6 +1,7 @@
 module.exports = {
   'tabbar-height': '55px',
   'tabbar-item-active-color': 'var(--primary)',
+  'tabbar-z-index': '40',
 
   'nav-bar-icon-color': 'black',
   'nav-bar-z-index': '50',

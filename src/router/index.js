@@ -43,6 +43,7 @@ const routes = [
     component: Login,
     meta: {
       keepAlive: false,
+      transition: false,
     },
   },
   {
@@ -111,6 +112,7 @@ const routes = [
       },
       {
         path: 'data',
+        name: 'PortraitData',
         component: PortraitData,
         meta: {
           personal: true,
