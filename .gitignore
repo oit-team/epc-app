@@ -3,6 +3,7 @@ node_modules
 /dist
 /epc-app
 .history
+.temp
 
 # local env files
 .env.local
