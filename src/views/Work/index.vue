@@ -32,11 +32,12 @@
         </e-grid>
       </e-panel>
     </div>
+    <e-tabbar ref="tabbar"></e-tabbar>
   </div>
 </template>
 
 <script>
-import { EGrid, EGridItem, EPanel, EBadge } from '@/components'
+import { EGrid, EGridItem, EPanel, EBadge, ETabbar } from '@/components'
 import * as api from '@/api/work'
 
 export default {
@@ -47,6 +48,7 @@ export default {
     EGridItem,
     EPanel,
     EBadge,
+    ETabbar,
   },
 
   data: () => ({
@@ -95,9 +97,8 @@ export default {
 
   methods: {
     getBhdCount() {
-      const tabbar = this.$parent.$refs.tabbar
-
       api.getBhdCount().then(res => {
+        const tabbar = this.$refs.tabbar
         res.body.resultList?.forEach(item => {
           this.panelData[0].items.forEach(panelItem => {
             if (panelItem.bhdId === item.bhdItem) {

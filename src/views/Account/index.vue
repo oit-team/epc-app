@@ -20,17 +20,20 @@
     </div>
 
     <router-view></router-view>
+
+    <e-tabbar />
   </div>
 </template>
 
 <script>
-import { ECell } from '@/components'
+import { ECell, ETabbar } from '@/components'
 
 export default {
   name: 'Account',
 
   components: {
     ECell,
+    ETabbar,
   },
 
   computed: {

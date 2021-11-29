@@ -19,6 +19,7 @@ import EBadge from './EBadge'
 import ECell from './ECell'
 import EInfiniteLoading from './EInfiniteLoading'
 import EPullRefresh from './EPullRefresh'
+import ECalendar from './ECalendar'
 
 // 需要全局注册的组件，使用频繁的组件可以放在这里
 const commonComponents = [
@@ -59,4 +60,5 @@ export {
   ECell,
   EInfiniteLoading,
   EPullRefresh,
+  ECalendar,
 }

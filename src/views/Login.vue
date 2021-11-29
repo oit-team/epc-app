@@ -1,42 +1,44 @@
 <template>
-  <div class="flex-center text-center px-10 bg-white">
-    <div class="flex-1">
-      <div class="mb-8">
-        <e-img src="assets/images/logo.png" size="90"></e-img>
-        <div class="text-xl font-bold text-gray-3">欢迎来到EPC</div>
+  <v-promised append>
+    <div class="flex-center text-center px-10">
+      <div>
+        <div class="mb-8">
+          <e-img src="assets/images/logo.png" size="90"></e-img>
+          <div class="text-xl font-bold text-gray-3">欢迎来到EPC</div>
+        </div>
+        <form @submit.prevent>
+          <div class="field">
+            <e-icon class="text-gray-1" size="18">user</e-icon>
+            <input v-model.trim="form.username" type="text" placeholder="账号">
+            <e-icon
+              v-if="form.username.length > 0"
+              class="text-gray-1"
+              size="14"
+              @click="form.username = ''"
+              @mousedown.prevent
+            >
+              circle-xmark
+            </e-icon>
+          </div>
+          <div class="field">
+            <e-icon class="text-gray-1" size="18">lock-keyhole</e-icon>
+            <input v-model.trim="form.password" type="password" placeholder="密码">
+            <e-icon
+              v-if="form.password.length > 0"
+              class="text-gray-1"
+              size="14"
+              @click="form.password = ''"
+              @mousedown.prevent
+            >
+              circle-xmark
+            </e-icon>
+          </div>
+          <e-btn class="mt-10" type="primary" block @click="login()">登录</e-btn>
+        </form>
       </div>
-      <form @submit.prevent>
-        <div class="field">
-          <e-icon class="text-gray-1" size="18">user</e-icon>
-          <input v-model.trim="form.username" type="text" placeholder="账号">
-          <e-icon
-            v-if="form.username.length > 0"
-            class="text-gray-1"
-            size="14"
-            @click="form.username = ''"
-            @mousedown.prevent
-          >
-            circle-xmark
-          </e-icon>
-        </div>
-        <div class="field">
-          <e-icon class="text-gray-1" size="18">lock-keyhole</e-icon>
-          <input v-model.trim="form.password" type="password" placeholder="密码">
-          <e-icon
-            v-if="form.password.length > 0"
-            class="text-gray-1"
-            size="14"
-            @click="form.password = ''"
-            @mousedown.prevent
-          >
-            circle-xmark
-          </e-icon>
-        </div>
-        <e-btn class="mt-10" type="primary" block @click="login()">登录</e-btn>
-      </form>
+      <e-loading :show="showLoading">正在验证登录</e-loading>
     </div>
-    <e-loading :show="showLoading">正在验证登录</e-loading>
-  </div>
+  </v-promised>
 </template>
 
 <script>
@@ -44,6 +46,7 @@ import crypto from '@/utils/crypto'
 import * as api from '@/api/user'
 import { ELoading } from '@/components'
 import iframe from '@/utils/iframe'
+import router from '@/router'
 
 export default {
   name: 'Login',
@@ -81,7 +84,7 @@ export default {
           ...res.body.result,
           accessToken: res.body.accessToken,
         })
-        iframe.loginSuccess()
+        iframe.loginSuccess(this.$store.getters.userData)
 
         this.$router.to('/portrait')
         this.$toast.success('登录成功')
@@ -91,7 +94,11 @@ export default {
     },
     checkLogin() {
       this.showLoading = true
-      this.$store.dispatch('checkLogin', false).finally(() => {
+      this.$store.dispatch('checkLogin', false).then(() => {
+        router.replace('/portrait').then(() => {
+          this.showLoading = false
+        })
+      }).catch(() => {
         this.showLoading = false
       })
     },
@@ -99,9 +106,10 @@ export default {
 }
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .field {
   @apply flex items-center px-2 mt-2;
+  width: 240px;
   height: 45px;
   background-color: #e1e1e1;
 

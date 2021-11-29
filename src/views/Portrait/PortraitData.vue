@@ -3,7 +3,7 @@
     <e-header v-if="$route.meta.page" :title="portraitData.title"></e-header>
     <div class="filter-bar justify-between pr-3">
       <e-tabs v-model="dataType" class="data-type">
-        <e-tab title="基本信息"></e-tab>
+        <e-tab title="优秀表现"></e-tab>
         <e-tab title="风险管理"></e-tab>
       </e-tabs>
       <e-icon v-if="!$route.meta.page" class="text-secondary" @click="showCalendar = true">calendar-days</e-icon>
@@ -94,7 +94,7 @@
       <!--      <e-loading :promise="loadingPromise"></e-loading>-->
     </div>
 
-    <van-calendar
+    <e-calendar
       v-model="showCalendar"
       type="range"
       :min-date="minDate"
@@ -106,11 +106,11 @@
 </template>
 
 <script>
-import { ETabs, ETab, EPanel, ECharts } from '@/components'
+import { ETabs, ETab, EPanel, ECharts, ECalendar } from '@/components'
 import theme from '@/theme'
 import * as api from '@/api/portrait'
 import { getDaysAgo, formatDate } from '@/utils/helper'
-import { Calendar, Popup } from 'vant'
+import { Popup } from 'vant'
 
 export default {
   name: 'PortraitData',
@@ -120,8 +120,8 @@ export default {
     ETab,
     EPanel,
     ECharts,
+    ECalendar,
     [Popup.name]: Popup,
-    [Calendar.name]: Calendar,
   },
 
   data: () => ({
@@ -181,9 +181,9 @@ export default {
           {
             type: 'radar',
             itemStyle: {
-              color: theme.primary,
+              color: this.radarChartColor,
               lineStyle: {
-                color: theme.primary,
+                color: this.radarChartColor,
               },
             },
             // 不显示数字
@@ -294,6 +294,9 @@ export default {
       if (this.$route.meta.personal) return { userId: this.id }
       else if (this.$route.meta.dept) return { deptId: this.id }
       return {}
+    },
+    radarChartColor() {
+      return this.portraitData.qualificationNum >= 60 ? theme.primary : theme.warn
     },
   },
 

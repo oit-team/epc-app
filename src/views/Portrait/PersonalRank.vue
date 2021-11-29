@@ -38,22 +38,23 @@
       </e-panel>
     </div>
 
-    <van-calendar
+    <e-calendar
       v-model="showCalendar"
       type="range"
       :min-date="minDate"
       :max-date="maxDate"
       allow-same-day
+      color="#67cf69"
       @confirm="confirmCalendar"
     />
   </e-promise>
 </template>
 
 <script>
-import { EPanel, EEmpty } from '@/components'
+import { EPanel, EEmpty, ECalendar } from '@/components'
 import * as api from '@/api/portrait'
 import { formatDate, getDaysAgo, registerVantComponents } from '@/utils/helper'
-import { Calendar, Search } from 'vant'
+import { Search } from 'vant'
 
 const RankItem = {
   props: {
@@ -96,8 +97,9 @@ export default {
   components: {
     EPanel,
     EEmpty,
+    ECalendar,
     RankItem,
-    ...registerVantComponents([Search, Calendar]),
+    ...registerVantComponents([Search]),
   },
 
   data: () => ({

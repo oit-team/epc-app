@@ -1,28 +1,36 @@
 <template>
   <div class="flex flex-col">
-    <div v-if="!$route.meta.page" class="flex bg-white justify-center py-2 text-lg">
-      <div
-        v-for="(tab, index) of tabs"
-        :key="tab.to"
-        v-to="tab.to"
-        class="mx-3"
-        :class="{'text-primary': tabIndex === index}"
-      >
-        {{ tab.title }}
+    <template v-if="!$route.meta.page">
+      <div class="flex bg-white justify-center py-2 text-lg">
+        <div
+          v-for="(tab, index) of tabs"
+          :key="tab.to"
+          v-to="tab.to"
+          class="mx-3"
+          :class="{'text-primary': tabIndex === index}"
+        >
+          {{ tab.title }}
+        </div>
       </div>
-    </div>
-
-    <e-divider />
+      <e-divider />
+    </template>
 
     <router-view class="flex-1 flex flex-col relative overflow-hidden"></router-view>
+
+    <e-tabbar />
   </div>
 </template>
 
 <script>
 // TODO: 用颜色区分分数
+import { ETabbar } from '@/components'
 
 export default {
   name: 'Portrait',
+
+  components: {
+    ETabbar,
+  },
 
   computed: {
     tabIndex() {

@@ -44,7 +44,7 @@
       ></van-tree-select>
     </van-popup>
 
-    <van-calendar
+    <e-calendar
       v-model="showCalendar"
       type="range"
       :min-date="minDate"
@@ -56,8 +56,8 @@
 </template>
 
 <script>
-import { EPanel } from '@/components'
-import { TreeSelect, Popup, Calendar } from 'vant'
+import { EPanel, ECalendar } from '@/components'
+import { TreeSelect, Popup } from 'vant'
 import * as api from '@/api/portrait'
 import { formatDate, getDaysAgo, registerVantComponents } from '@/utils/helper'
 
@@ -88,8 +88,9 @@ export default {
 
   components: {
     EPanel,
+    ECalendar,
     RankItem,
-    ...registerVantComponents([TreeSelect, Popup, Calendar]),
+    ...registerVantComponents([TreeSelect, Popup]),
   },
 
   data: () => ({
