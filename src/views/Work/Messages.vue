@@ -94,10 +94,12 @@ export default {
       })
     },
     loadMore($state) {
-      this.getMsgList(this.type, $state.page).then(res => {
-        if (res.body.resultList.length === 0) $state.finished()
-        else $state.loaded()
-      }).catch($state.error)
+      this.getMsgList(this.type, $state.page)
+        .then(res => {
+          if (res.body.resultList.length === 0) $state.finished()
+          else $state.loaded()
+        })
+        .catch($state.error)
     },
   },
 }

@@ -8,6 +8,10 @@ import API_SERVICE from './API_SERVICE'
  * @param {number} params.endTime 结束时间
  * @param {number} params.userId 用户ID
  */
+export function getExcellentScore(params) {
+  return post(API_SERVICE.REPORTING + '/starList/getExcellentScore', params)
+}
+
 export function getMyPortrait(params) {
   return post(API_SERVICE.REPORTING + '/portrait/getMyPortrait', params)
 }

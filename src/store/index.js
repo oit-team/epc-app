@@ -44,6 +44,8 @@ const STATIC_TYPES = {
 }
 
 export default new Vuex.Store({
+  // 严格模式
+  strict: process.env.NODE_ENV !== 'production',
   state: {
     // 用户数据
     userData: {},

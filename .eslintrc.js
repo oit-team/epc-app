@@ -1,4 +1,5 @@
 const production = process.env.NODE_ENV === 'production'
+const testing = process.env.NODE_ENV === 'testing'
 
 module.exports = {
   root: true,
@@ -19,8 +20,8 @@ module.exports = {
   rules: {
     // 使用console时警告
     'no-console': ['warn', { allow: ['debug', 'error', 'warn'] }],
-    'no-debugger': production ? 'error' : 'warn',
-    'no-alert': production ? 'error' : 'warn',
+    'no-debugger': production || testing ? 'error' : 'warn',
+    'no-alert': production || testing ? 'error' : 'warn',
     // 推荐使用"==="进行比较
     eqeqeq: ['warn', 'always'],
     // 函数后面紧贴括号
@@ -41,9 +42,18 @@ module.exports = {
     'operator-linebreak': ['error', 'before'],
     // 要求使用 let 或 const 而不是 var
     'no-var': 'error',
+    // 不强制要求使用 Error 对象作为 Promise 拒绝的原因
+    'prefer-promise-reject-errors': 'off',
+    // 要求方法链中每个调用都有一个换行符
+    'newline-per-chained-call': ['error', { ignoreChainWithDepth: 2 }],
+    // 强制模板字符串中使用空格
+    'template-curly-spacing': ['error', 'always'],
     /* -------------以下为vue相关验证[https://eslint.vuejs.org/rules]------------- */
     // 缩进规则
-    'vue/script-indent': ['error', 2, { baseIndent: 0, switchCase: 1 }],
+    'vue/script-indent': ['error', 2, {
+      baseIndent: 0,
+      switchCase: 1,
+    }],
     // 闭合标签
     'vue/html-self-closing': 'off',
     // html属性超过5个时换行

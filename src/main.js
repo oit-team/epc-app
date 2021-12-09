@@ -20,7 +20,7 @@ import './compatible'
 
 // 保存主题到css变量
 Object.entries(theme).forEach(([name, value]) => {
-  document.querySelector('html').style.setProperty(`--${name}`, value)
+  document.querySelector('html').style.setProperty(`--${ name }`, value)
 })
 
 // eruda.init()

@@ -12,9 +12,15 @@ function resolve(dir) {
   return path.join(__dirname, dir)
 }
 
+const buildDirName = {
+  development: 'epc-app-dev',
+  production: 'epc-app',
+  testing: 'epc-app-test',
+}
+
 module.exports = {
   publicPath: './',
-  outputDir: 'epc-app',
+  outputDir: buildDirName[process.env.NODE_ENV],
   devServer: {
     port: 1100,
     proxy: {

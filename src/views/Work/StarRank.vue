@@ -1,7 +1,6 @@
 <template>
   <div class="bg-white flex flex-col">
     <e-header title="明星榜" border></e-header>
-
     <div class="date-type flex bg-white z-50">
       <e-tabs v-model="dateType" class="flex-1">
         <e-tab title="日" name="1"></e-tab>
@@ -16,7 +15,11 @@
 
     <div class="bg-gray">
       <div class="text-center text-sm mt-2">{{ queryDateField }}</div>
-      <e-tabs v-model="userIndex" class="star-people text-left bg-gray" hide-slider>
+      <e-tabs
+        v-model="userIndex"
+        class="star-people text-left bg-gray"
+        hide-slider
+      >
         <e-tab v-for="item of userRankList" :key="item.userId">
           <template #title>
             <div class="star-people-card">
@@ -38,25 +41,27 @@
     </div>
 
     <e-tabs v-model="chartType" class="chart-tabs">
-      <e-tab title="软件使用比"></e-tab>
-      <e-tab title="软件使用分布"></e-tab>
+      <e-tab title="优秀表现" :name="CHART_TYPES.PORTRAIT"></e-tab>
+      <e-tab title="软件使用比" :name="CHART_TYPES.USE_RATIO"></e-tab>
+      <e-tab title="软件使用分布" :name="CHART_TYPES.USE_TIME"></e-tab>
     </e-tabs>
     <div class="relative flex-1 overflow-hidden bg-gray">
       <e-charts
-        v-if="chartType === USE_RATIO"
+        v-if="chartType === CHART_TYPES.PORTRAIT"
+        :option="portraitChartOption"
+      ></e-charts>
+      <e-charts
+        v-if="chartType === CHART_TYPES.USE_RATIO"
         key="USE_RATIO"
         :option="useRatioChartOption"
       ></e-charts>
       <e-charts
-        v-if="chartType === USE_TIME"
+        v-if="chartType === CHART_TYPES.USE_TIME"
         ref="useTime"
         key="USE_TIME"
         :option="useTimeChartOption"
       ></e-charts>
-      <e-empty v-if="chartEmpty" class="bg-gray"></e-empty>
-      <e-loading class="bg-gray" :show="chartLoading"></e-loading>
     </div>
-
     <e-empty v-if="pageEmpty" class="bg-gray"></e-empty>
     <e-loading class="bg-gray" :show="pageLoading"></e-loading>
     <e-picker
@@ -70,12 +75,19 @@
 <script>
 import { ETabs, ETab, ECharts, ELoading, EPicker, EEmpty } from '@/components'
 import * as api from '@/api/star'
+import { getExcellentScore } from '@/api/portrait'
+import theme from '@/theme'
 import API_STATUS from '@/api/API_STATUS'
 
-// 使用比
-const USE_RATIO = 0
-// 使用时长
-const USE_TIME = 1
+const CHART_TYPES = {
+  // 画像图表
+  PORTRAIT: 0,
+  // 使用比
+  USE_RATIO: 1,
+  // 使用时长
+  USE_TIME: 2,
+}
+
 // 日期类型
 const DATE_TYPES = {
   // 日
@@ -105,6 +117,8 @@ export default {
   },
 
   data: () => ({
+    // 优秀表现
+    portraitData: {},
     // 用户排行数据
     userRankList: [],
     // 图表数据
@@ -113,7 +127,6 @@ export default {
     dateFilters: {},
     // 软件使用时长数据
     useTimeList: [],
-
     // 时间筛选类型选择
     dateType: '1',
     // 图表类型选择
@@ -127,12 +140,62 @@ export default {
     // 页面无数据
     pageEmpty: false,
     // 图表loading
-    chartLoading: true,
+    chartLoading: false,
     // 图表无数据
     chartEmpty: false,
   }),
 
   computed: {
+    portraitChartOption() {
+      const {
+        workAttitude,
+        eawPercent,
+        forceExecutive,
+        validTimePercent,
+        workEnthusiasm,
+      } = this.portraitData
+
+      return {
+        grid: {
+          width: 100,
+        },
+        radar: {
+          indicator: [
+            '工作态度',
+            '工作效率',
+            '工作改进',
+            '职位贡献',
+            '工作热情',
+          ].map(name => ({
+            name,
+            max: 100,
+          })),
+          radius: [0, 100],
+        },
+        series: [
+          {
+            type: 'radar',
+            itemStyle: {
+              color: theme.warn,
+              lineStyle: {
+                color: theme.warn,
+              },
+            },
+            data: [
+              {
+                value: [
+                  workAttitude,
+                  eawPercent,
+                  forceExecutive,
+                  validTimePercent,
+                  workEnthusiasm,
+                ],
+              },
+            ],
+          },
+        ],
+      }
+    },
     // 软件使用比图表配置
     useRatioChartOption() {
       return {
@@ -223,14 +286,13 @@ export default {
     // 时间筛选条件选项
     dateFilterColumns() {
       const dateType = this.dateType
-
       if (dateType === DATE_TYPES.WEEK) {
         return this.dateFilters[dateType]?.map(item => {
-          return `${item.startTime} - ${item.endTime}`
+          return `${ item.startTime } - ${ item.endTime }`
         })
       } else if (dateType === DATE_TYPES.SEASON) {
         return this.dateFilters[dateType]?.map(item => {
-          return `第${item.belong}季度 ${item.startTime} - ${item.endTime}`
+          return `第${ item.belong }季度 ${ item.startTime } - ${ item.endTime }`
         })
       } else {
         return this.dateFilters[dateType]
@@ -273,8 +335,7 @@ export default {
   },
 
   created() {
-    this.USE_RATIO = USE_RATIO
-    this.USE_TIME = USE_TIME
+    this.CHART_TYPES = CHART_TYPES
 
     this.loadData()
   },
@@ -284,12 +345,14 @@ export default {
       this.pageLoading = true
       await this.getTopEmployeeByDate()
       await this.getUserRanking()
-      await this.loadChartData()
+      if (this.selectedUser) {
+        await this.loadChartData()
+      }
       this.pageLoading = false
     },
     loadChartData() {
       this.chartLoading = true
-      return Promise.all([this.getUserSotfRanking(), this.getSotfUeingList()])
+      return Promise.all([this.getUserSotfRanking(), this.getSotfUeingList(), this.getExcellentScore()])
         .then(() => {
           this.chartEmpty = !this.useTimeList.length
         })
@@ -318,7 +381,6 @@ export default {
         // 季，往前推几季
         [DATE_TYPES.SEASON]: 3,
       }
-
       const params = {
         flag: dateType,
         dayNum: dateMap[dateType],
@@ -332,51 +394,53 @@ export default {
     getUserRanking() {
       const dateType = this.dateType
       this.$refs.picker.close()
-
-      return api.getUserRanking({
-        orgId: this.$store.getters.userData.orgId,
-        flag: dateType,
-        belong: this.formatQuery(this.selectedDate, true),
-      }).then(res => {
-        this.userRankList = res.body.resultList
-        this.pageEmpty = false
-        // 如果用户不存在则重置下标
-        if (this.selectedUser === undefined) {
-          this.userIndex = 0
-        }
-      }).catch(err => {
-        if (err.head.status === API_STATUS.FAILED && err.body === null) {
-          this.userRankList = []
-          this.pageEmpty = true
-          this.loading = false
-        }
-      })
+      return api
+        .getUserRanking({
+          orgId: this.$store.getters.userData.orgId,
+          flag: dateType,
+          belong: this.formatQuery(this.selectedDate, true),
+        })
+        .then(res => {
+          this.userRankList = res.body.resultList
+          this.pageEmpty = false
+          // 如果用户不存在则重置下标
+          if (this.selectedUser === undefined) {
+            this.userIndex = 0
+          }
+        })
+        .catch(err => {
+          if (err.head.status === API_STATUS.FAILED && err.body === null) {
+            this.userRankList = []
+            this.pageEmpty = true
+            this.pageLoading = false
+          }
+        })
     },
     // 查询软件使用比
     getUserSotfRanking() {
-      if (!this.selectedUser) return
-
-      return api.getUserSotfRanking({
-        orgId: this.$store.getters.userData.orgId,
-        userId: this.selectedUser.userId,
-        flag: this.dateType,
-        belong: this.queryDateField,
-      }).then(res => {
-        this.useRatio = res.body
-      })
+      return api
+        .getUserSotfRanking({
+          orgId: this.$store.getters.userData.orgId,
+          userId: this.selectedUser.userId,
+          flag: this.dateType,
+          belong: this.queryDateField,
+        })
+        .then(res => {
+          this.useRatio = res.body
+        })
     },
     // 查询软件使用时长
     getSotfUeingList() {
-      if (!this.selectedUser) return
-
-      return api.getSotfUeingList({
-        orgId: this.$store.getters.userData.orgId,
-        userId: this.selectedUser.userId,
-        flag: this.dateType,
-        belong: this.queryDateField,
-      }).then(res => {
-        this.useTimeList = res.body.sotfUeingList
-      })
+      return api
+        .getSotfUeingList({
+          orgId: this.$store.getters.userData.orgId,
+          userId: this.selectedUser.userId,
+          flag: this.dateType,
+          belong: this.queryDateField,
+        })
+        .then(res => {
+          this.useTimeList = res.body.sotfUeingList
+        })
     },
     // TODO: 确认后缓存选中，下次切换时间选择回到之前的选中，切换人员时重置
     confirmDateFilter(value, index) {
@@ -388,79 +452,89 @@ export default {
      */
     formatQuery(item, num) {
       if (this.dateType === DATE_TYPES.WEEK) {
-        return `${item.startTime}-${item.endTime}`
+        return `${ item.startTime }-${ item.endTime }`
       } else if (this.dateType === DATE_TYPES.SEASON) {
-        return num ? item.belong : `${item.startTime}-${item.endTime}`
+        return num ? item.belong : `${ item.startTime }-${ item.endTime }`
       } else {
         return item
       }
+    },
+    getExcellentScore() {
+      return getExcellentScore({
+        orgId: this.$store.getters.userData.orgId,
+        userId: this.selectedUser.userId,
+        flag: this.dateType,
+        belong: this.queryDateField,
+      }).then(res => {
+        this.portraitData = res.body.result || {}
+      })
     },
   },
 }
 </script>
 
 <style lang="scss" scoped>
-.date-type::v-deep {
-  .van-tabs__nav {
-    padding-bottom: 10px;
-  }
+  .date-type::v-deep {
+    .van-tabs__nav {
+      padding-bottom: 10px;
+    }
 
-  .van-tabs__nav > :not(:last-child) ~ :not(:last-child){
-    &:before {
-      content: '';
-      display: block;
-      position: absolute;
-      left: 0;
-      height: 1em;
-      border-left: 2px solid #f0f0f0;
+    .van-tabs__nav > :not(:last-child) ~ :not(:last-child) {
+      &:before {
+        content: "";
+        display: block;
+        position: absolute;
+        left: 0;
+        height: 1em;
+        border-left: 2px solid #f0f0f0;
+      }
+    }
+
+    .van-tab--active {
+      font-size: 1rem;
     }
   }
 
-  .van-tab--active {
-    font-size: 1rem;
-  }
-}
-
-.star-people::v-deep {
-  .van-tabs__wrap {
-    height: initial;
-  }
-
-  .van-tabs__nav {
-    height: 100px;
-    padding: 10px 5px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    background: transparent;
-    box-sizing: border-box;
-  }
-
-  .van-tab {
-    flex: 1 0 auto;
-
-    .van-tab__text {
-      overflow: initial;
-      flex: inherit;
+  .star-people::v-deep {
+    .van-tabs__wrap {
+      height: initial;
     }
 
-    .star-people-card {
-      @apply flex items-center justify-center p-2 bg-white rounded-lg;
-      transition: 0.3s;
+    .van-tabs__nav {
+      height: 100px;
+      padding: 10px 5px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      background: transparent;
+      box-sizing: border-box;
+    }
+
+    .van-tab {
+      flex: 1 0 auto;
+
+      .van-tab__text {
+        overflow: initial;
+        flex: inherit;
+      }
+
+      .star-people-card {
+        @apply flex items-center justify-center p-2 bg-white rounded-lg;
+        transition: 0.3s;
+      }
+    }
+
+    .van-tab--active {
+      .star-people-card {
+        background: #e8f2e7;
+      }
     }
   }
 
-  .van-tab--active {
-    .star-people-card {
-      background: #e8f2e7;
+  .chart-tabs::v-deep {
+    .van-tab {
+      flex: none;
+      padding: 0 10px;
     }
   }
-}
-
-.chart-tabs::v-deep {
-  .van-tab {
-    flex: none;
-    padding: 0 10px;
-  }
-}
 </style>

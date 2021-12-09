@@ -10,7 +10,7 @@ import apiConfig from './api.config'
 const axiosConfig = {
   // 请求超时时间
   timeout: 60000,
-  baseURL: process.env.NODE_ENV === 'production' ? './epc' : apiConfig.baseURL,
+  baseURL: ['production', 'testing'].includes(process.env.NODE_ENV) ? './epc' : apiConfig.baseURL,
 }
 
 // 创建axios实例
@@ -82,9 +82,11 @@ export function post(url, params = {}, config = { tips: true }) {
   // 根据传入的配置判断是否需要显示加载提示
   if (config.loading) {
     const type = typeof config.loading
-    const options = type === 'string' ? config.loading
-                    : type === 'boolean' ? {}
-                    : config.loading
+    const options = type === 'string'
+      ? config.loading
+      : type === 'boolean'
+        ? {}
+        : config.loading
     // 低于设置的延迟则不显示loading
     defer = setTimeout(() => {
       Toast.loading(options)
@@ -95,21 +97,24 @@ export function post(url, params = {}, config = { tips: true }) {
     url,
     method: 'post',
     data: formattedParams,
-  }).then(res => {
-    if (res.data.head?.status === API_STATUS.OK) {
-      return res.data
-    } else {
-      return Promise.reject(res.data)
-    }
-  }).catch(err => {
-    HandlingError(err.isAxiosError ? err.response?.status : err.head?.status, config.tips)
-    return Promise.reject(err)
-  }).finally(() => {
-    if (config.loading) {
-      Toast.clear()
-      clearTimeout(defer)
-    }
   })
+    .then(res => {
+      if (res.data.head?.status === API_STATUS.OK) {
+        return res.data
+      } else {
+        return Promise.reject(res.data)
+      }
+    })
+    .catch(err => {
+      HandlingError(err.isAxiosError ? err.response?.status : err.head?.status, config.tips)
+      return Promise.reject(err)
+    })
+    .finally(() => {
+      if (config.loading) {
+        Toast.clear()
+        clearTimeout(defer)
+      }
+    })
 }
 
 export default axios

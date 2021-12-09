@@ -12,11 +12,11 @@ export function convertToUnit(str, unit = 'px') {
   else if (isNaN(+str))
     size = String(str)
   else
-    size = `${Number(str)}${unit}`
+    size = `${ Number(str) }${ unit }`
 
   if (/([0-9]+(\.?[0-9]+)?)px$/.test(size)) {
     const num = parseFloat(size)
-    return `${num / 375 * 100}vw`
+    return `${ num / 375 * 100 }vw`
   } else {
     return size
   }
@@ -44,7 +44,7 @@ export const formatDate = (date, format = 'yyyy/MM/dd') => {
     's+': date.getSeconds(),
   }
   for (const k in o) {
-    if (new RegExp(`(${k})`).test(format)) {
+    if (new RegExp(`(${ k })`).test(format)) {
       const str = o[k] + ''
       format = format.replace(
         RegExp.$1,

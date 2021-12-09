@@ -231,9 +231,7 @@ const router = new VueRouter({
 router.beforeEach(async(to, from, next) => {
   next()
 
-  console.debug(`[路由] 跳转到【${to.path}】成功\n`, 'query:', to.query, 'params:', to.params)
+  console.debug(`[路由] 跳转到【${ to.path }】成功\n`, 'query:', to.query, 'params:', to.params)
 })
-
-console.debug(configureRoutes(routes))
 
 export default router

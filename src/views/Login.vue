@@ -1,5 +1,10 @@
 <template>
-  <v-promised append>
+  <v-promised
+    :promise="promise.checkLogin"
+    pending-tips="正在验证数据"
+    once
+    only-pending
+  >
     <div class="flex-center text-center px-10">
       <div>
         <div class="mb-8">
@@ -36,7 +41,6 @@
           <e-btn class="mt-10" type="primary" block @click="login()">登录</e-btn>
         </form>
       </div>
-      <e-loading :show="showLoading">正在验证登录</e-loading>
     </div>
   </v-promised>
 </template>
@@ -44,22 +48,21 @@
 <script>
 import crypto from '@/utils/crypto'
 import * as api from '@/api/user'
-import { ELoading } from '@/components'
 import iframe from '@/utils/iframe'
 import router from '@/router'
 
 export default {
   name: 'Login',
 
-  components: {
-    ELoading,
-  },
-
   data: () => ({
     showLoading: false,
     form: {
       username: '',
       password: '',
+    },
+
+    promise: {
+      checkLogin: null,
     },
   }),
 
@@ -79,27 +82,32 @@ export default {
       api.loginAccount({
         employeeId: this.form.username,
         passWord: encryptedPwd,
-      }).then(res => {
-        this.$store.commit('SAVE_USER_DATA', {
-          ...res.body.result,
-          accessToken: res.body.accessToken,
-        })
-        iframe.loginSuccess(this.$store.getters.userData)
-
-        this.$router.to('/portrait')
-        this.$toast.success('登录成功')
-      }).catch(err => {
-        this.$toast.fail(err.head.msg)
       })
+        .then(res => {
+          this.$store.commit('SAVE_USER_DATA', {
+            ...res.body.result,
+            accessToken: res.body.accessToken,
+          })
+          iframe.loginSuccess(this.$store.getters.userData)
+
+          this.$router.to('/portrait')
+          this.$toast.success('登录成功')
+        })
+        .catch(err => {
+          this.$toast.fail(err.head.msg)
+        })
     },
     checkLogin() {
-      this.showLoading = true
-      this.$store.dispatch('checkLogin', false).then(() => {
-        router.replace('/portrait').then(() => {
-          this.showLoading = false
-        })
-      }).catch(() => {
-        this.showLoading = false
+      this.promise.checkLogin = new Promise((resolve, reject) => {
+        this.$store.dispatch('checkLogin', false)
+          .then(() => {
+            router.replace('/portrait').then(resolve)
+          })
+          .catch(() => {
+            reject({
+              isEmpty: false,
+            })
+          })
       })
     },
   },
