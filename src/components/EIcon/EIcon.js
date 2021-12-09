@@ -40,7 +40,7 @@ export default {
         }, [
           h('use', {
             attrs: {
-              'xlink:href': `#icon-${this.iconName}`,
+              'xlink:href': `#icon-${ this.iconName }`,
             },
           }),
         ]),

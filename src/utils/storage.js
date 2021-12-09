@@ -21,7 +21,7 @@ export function setStorage(key, value, defer = false) {
     setTimeout(() => storage.setItem(key, data))
   else
     storage.setItem(key, data)
-  console.debug(`[缓存] key: ${key}`, 'rawData:', value)
+  console.debug(`[缓存] key: ${ key }`, 'rawData:', value)
 }
 
 /**

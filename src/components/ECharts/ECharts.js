@@ -97,7 +97,7 @@ export default {
           '^.Axis$': 'GridComponent',
         }
 
-        componentName = `${upperFirst(item)}Component`
+        componentName = `${ upperFirst(item) }Component`
 
         if (echartsComponents[componentName]) {
           components.add(echartsComponents[componentName])
@@ -121,7 +121,7 @@ export default {
 
       const chartTypes = []
       this.option.series.forEach(item => {
-        const chartName = `${upperFirst(item.type)}Chart`
+        const chartName = `${ upperFirst(item.type) }Chart`
         !chartTypes.includes(echartsTypes[chartName])
           && echartsTypes[chartName]
           && chartTypes.push(echartsTypes[chartName])
@@ -130,7 +130,11 @@ export default {
       return chartTypes
     },
     async detectModuleChanges(newOption, oldOption) {
-      const keyStr = opt => opt && Object.keys(opt).sort().toString()
+      const keyStr = opt => {
+        return opt && Object.keys(opt)
+          .sort()
+          .toString()
+      }
 
       // 比较对象属性是否变动
       if (keyStr(newOption) !== keyStr(oldOption)) {

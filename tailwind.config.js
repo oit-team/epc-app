@@ -4,7 +4,7 @@ const spacing = (() => {
   const spacers = {}
   const spacer = 5
   for (let i = 0, l = 20; i <= l; i++) {
-    spacers[i] = `${i * spacer}px`
+    spacers[i] = `${ i * spacer }px`
   }
   return spacers
 })()
@@ -12,9 +12,9 @@ const spacing = (() => {
 module.exports = {
   important: '#app',
   purge: [
-    './src/**/*.vue',
+    './src/**/*.{vue,js}',
   ],
-  darkMode: 'class',
+  darkMode: false,
   theme: {
     colors,
     zIndex: {
@@ -23,7 +23,7 @@ module.exports = {
       20: 20,
       30: 30,
       40: 40,
-      50: 50,
+      50: 50, // 基准
       60: 60,
       70: 70,
       80: 80,

@@ -1,7 +1,7 @@
 .DS_Store
 node_modules
 /dist
-/epc-app
+/epc-app*
 .history
 .temp
 

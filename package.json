@@ -7,9 +7,11 @@
     "build": "vue-cli-service build",
     "build:report": "vue-cli-service build --report",
     "build:dev": "vue-cli-service build --mode development",
+    "build:test": "vue-cli-service build --mode testing",
     "lint": "vue-cli-service lint",
-    "lint:fix": "eslint --fix --ext .js --ext .jsx --ext .vue src/",
-    "clean": "node scripts/clean.js",
+    "lint:fix": "eslint --fix --ext .js --ext .vue src/",
+    "clean": "rimraf",
+    "clean:build": "rimraf *.zip",
     "docs:dev": "vuepress dev docs --temp .temp",
     "docs:build": "vuepress build docs"
   },
@@ -20,7 +22,6 @@
     "crypto-js": "^4.1.1",
     "echarts": "^5.2.1",
     "lodash": "^4.17.21",
-    "tailwindcss": "npm:@tailwindcss/postcss7-compat",
     "vant": "^2.12.30",
     "vue": "^2.6.11",
     "vue-router": "^3.5.3",
@@ -39,7 +40,6 @@
     "@vue/cli-plugin-vuex": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
     "@vue/eslint-config-standard": "^5.1.2",
-    "@vuepress/plugin-back-to-top": "^1.8.2",
     "babel-eslint": "^10.1.0",
     "babel-plugin-import": "^1.13.3",
     "eruda": "^2.4.1",
@@ -53,10 +53,12 @@
     "less-loader": "^5.0.0",
     "lint-staged": "^9.5.0",
     "postcss-px-to-viewport": "^1.1.1",
+    "rimraf": "^3.0.2",
     "sass": "^1.26.5",
     "sass-loader": "^8.0.2",
     "svg-sprite-loader": "^6.0.10",
     "svgo-loader": "^3.0.0",
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat",
     "vue-template-compiler": "^2.6.11",
     "vuepress": "^1.8.2",
     "webpack-bundle-analyzer": "^4.5.0"
@@ -69,5 +71,8 @@
       "vue-cli-service lint",
       "git add"
     ]
-  }
+  },
+  "eslintIgnore": [
+    "**/v-promised"
+  ]
 }

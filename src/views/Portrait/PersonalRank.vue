@@ -119,13 +119,15 @@ export default {
   }),
 
   onLoad() {
-    this.loadingPromise = this.getUserPortrait().catch((err) => {
-      this.dataEmpty = true
-      this.portraitList = []
-      return Promise.reject(err)
-    }).finally(() => {
-      this.loadingPromise = null
-    })
+    this.loadingPromise = this.getUserPortrait()
+      .catch((err) => {
+        this.dataEmpty = true
+        this.portraitList = []
+        return Promise.reject(err)
+      })
+      .finally(() => {
+        this.loadingPromise = null
+      })
   },
 
   methods: {
@@ -151,7 +153,9 @@ export default {
       this.getUserPortrait()
     },
     refresh($state) {
-      this.getUserPortrait().then($state.loaded).catch($state.error)
+      this.getUserPortrait()
+        .then($state.loaded)
+        .catch($state.error)
     },
     loadData($state) {
       const promise = this.loadingPromise !== null ? this.loadingPromise : this.getUserPortrait($state.page)
@@ -162,9 +166,6 @@ export default {
   },
 }
 </script>
-
-<style lang="scss" scoped>
-</style>
 
 <style lang="scss">
 .van-field__control {

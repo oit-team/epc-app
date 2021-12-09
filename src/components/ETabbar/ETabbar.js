@@ -70,7 +70,7 @@ export default {
         scopedSlots: {
           icon: ({ active }) => h('e-img', {
             props: {
-              src: `assets/images/icons/${active ? item.icon + '-active' : item.icon}.png`,
+              src: `assets/images/icons/${ active ? item.icon + '-active' : item.icon }.png`,
               size: 30,
               showLoading: false,
               showError: false,

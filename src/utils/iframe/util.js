@@ -11,7 +11,7 @@ export default {
       methodName: type,
       ...params,
     }
-    console.debug('[index] 事件内容 ==>', eventContent)
+    console.debug('[iframe] 事件内容 ==>', eventContent)
 
     if (isIos) window.webkit?.messageHandlers?.JsCallObjectC?.postMessage(JSON.stringify(eventContent))
     if (isAndroid) window.JsCallObjectC?.postMessage(JSON.stringify(eventContent))
