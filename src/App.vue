@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <transition :name="transitionName">
-      <keep-alive :include="keepAlive.toString()">
+      <keep-alive :include="[...keepAlive, ...routeHistory].toString()">
         <router-view class="router-view"></router-view>
       </keep-alive>
     </transition>

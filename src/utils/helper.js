@@ -85,15 +85,15 @@ export function getRawType(value) {
  * @returns {object} 合并结果
  */
 export function mergeContextData(context, data) {
-  const assign = (obj1, obj2) => Object.assign({}, obj1, obj2)
+  const merge = (obj1, obj2) => Object.assign({}, obj1, obj2)
 
   return {
     ...context.data,
     ...data,
-    attrs: assign(context.data.attrs, data.attrs),
-    props: assign(context.props, data.props),
-    on: assign(context.listeners, data.on),
-    scopedSlots: assign(context.data.scopedSlots, data.scopedSlots),
+    attrs: merge(context.data.attrs, data.attrs),
+    props: merge(context.props, data.props),
+    on: merge(context.listeners, data.on),
+    scopedSlots: merge(context.data.scopedSlots, data.scopedSlots),
   }
 }
 

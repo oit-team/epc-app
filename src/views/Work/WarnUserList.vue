@@ -271,7 +271,7 @@ import { ELoading, EEmpty } from '@/components'
 import { Popup, Field } from 'vant'
 import Scroll from 'vue-slim-better-scroll'
 export default {
-  name: 'Index',
+  name: 'WarnUserList',
   components: {
     ELoading,
     Scroll,

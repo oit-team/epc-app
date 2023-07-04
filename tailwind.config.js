@@ -12,7 +12,7 @@ const spacing = (() => {
 module.exports = {
   important: '#app',
   purge: [
-    './src/**/*.{vue,js}',
+    './src/**/*.{vue,js,scss}',
   ],
   darkMode: false,
   theme: {

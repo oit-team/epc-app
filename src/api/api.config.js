@@ -1,4 +1,4 @@
-const baseURL = './dev'
+const baseURL = './epc'
 
 export default {
   baseURL,

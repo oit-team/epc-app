@@ -197,9 +197,9 @@ export default {
               {
                 value: [
                   workAttitude,
-                  eawPercent,
-                  forceExecutive,
                   validTimePercent,
+                  forceExecutive,
+                  eawPercent,
                   workEnthusiasm,
                 ],
               },

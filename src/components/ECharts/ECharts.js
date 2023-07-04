@@ -77,7 +77,7 @@ export default {
       this.$nextTick(() => {
         console.debug('[echarts] 配置改变 ==> ', this.option)
         this.chart.setOption(this.option, true)
-        // this.chart.resize()
+          // this.chart.resize()
       })
     },
     /**

@@ -22,7 +22,7 @@ module.exports = {
   publicPath: './',
   outputDir: buildDirName[process.env.NODE_ENV],
   devServer: {
-    port: 1100,
+    port: 2000,
     proxy: {
       // 本地
       '/dev': {
